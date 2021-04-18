@@ -1,5 +1,7 @@
-defmodule Automedia.Movable.FilenamesWithDate do
-  @with_date_and_time ~r[\/(?:IMG|VID)_(\d{4})(\d{2})(\d{2})_(\d{6})(\.(?:jpg|mp4))]
+defmodule Automedia.FilenamesWithDate do
+  require Automedia.Movable
+
+  @with_date_and_time ~r[\/(?:IMG|VID)_(\d{4})(\d{2})(\d{2})_(\d{6})\.(jpe?g|mp4)]
 
   def find(path) do
     list_files(path)
@@ -24,10 +26,10 @@ defmodule Automedia.Movable.FilenamesWithDate do
     if match do
       [year, month, day, time, extension] = match
       %Automedia.Movable{
-        pathname: pathname,
-        year: year,
-        month: month,
-        day: day,
+        source: pathname,
+        year: String.to_integer(year),
+        month: String.to_integer(month),
+        day: String.to_integer(day),
         time: time,
         extension: extension
       }
