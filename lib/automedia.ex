@@ -9,11 +9,10 @@ defmodule Automedia do
       System.fetch_env!("SOURCE_PATHS")
       |> String.split(",")
     destination_root = System.fetch_env!("MEDIA_ROOT")
-    movable_files = Enum.flat_map(
-      source_paths,
-      &Automedia.FilenamesWithDate.find/1
-    )
+
+    source_paths
+    |> Enum.flat_map(&Automedia.FilenamesWithDate.find/1)
     |> Automedia.DestinationChooser.run(destination_root)
-    IO.puts "movable_files: #{inspect(movable_files, [pretty: true, width: 0])}"
+    |> Enum.map(&Automedia.Move.move/1)
   end
 end

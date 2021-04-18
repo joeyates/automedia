@@ -1,5 +1,5 @@
 defmodule Automedia.DestinationChooser do
-  import Automedia.Movable
+  require Automedia.Movable
 
   def run(movable_files, destination_root) do
     Enum.map(movable_files, &(choose(&1, destination_root)))
