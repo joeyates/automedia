@@ -6,7 +6,8 @@ defmodule Automedia.FilenamesWithDate do
   def find(path) do
     list_files(path)
     |> Enum.map(&(Path.join(path, &1)))
-    |> Enum.filter(&match/1)
+    |> Enum.map(&match/1)
+    |> Enum.filter(&(&1))
   end
 
   defp list_files(path) do
