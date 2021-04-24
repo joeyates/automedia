@@ -3,9 +3,11 @@ defmodule Automedia.Move do
 
   require Automedia.Movable
 
-  def move(%Automedia.Movable{} = movable) do
-    path = Path.dirname(movable.destination)
-    File.mkdir_p!(path)
-    File.rename!(movable.source, movable.destination)
+  def move(%Automedia.Movable{source: source, destination: destination}) do
+    path = Path.dirname(destination)
+    if !File.dir?(path) do
+      File.mkdir_p!(path)
+    end
+    File.rename!(source, destination)
   end
 end
