@@ -1,5 +1,5 @@
 defmodule Automedia.FilenamesWithDate do
-  require Automedia.Movable
+  @moduledoc false
 
   @with_date_and_time ~r[\/(?:IMG|VID)_(\d{4})(\d{2})(\d{2})_(\d{6})\.(jpe?g|mp4)]
 
@@ -18,6 +18,7 @@ defmodule Automedia.FilenamesWithDate do
     match_with_date_and_time(pathname)
   end
 
+  @spec match_with_date_and_time(Automedia.Movable.t()) :: Automedia.Movable.t() | nil
   defp match_with_date_and_time(pathname) do
     match = Regex.run(
       @with_date_and_time,

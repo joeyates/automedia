@@ -1,10 +1,11 @@
 defmodule Automedia.DestinationChooser do
-  require Automedia.Movable
+  @moduledoc false
 
   def run(movable_files, destination_root) do
     Enum.map(movable_files, &(choose(&1, destination_root)))
   end
 
+  @spec choose(Automedia.Movable.t(), binary) :: Automedia.Movable.t()
   defp choose(
     %Automedia.Movable{
       year: year,

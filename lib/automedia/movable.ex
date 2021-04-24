@@ -1,4 +1,6 @@
 defmodule Automedia.Movable do
+  @moduledoc false
+
   defstruct [:source, :year, :month, :day, :time, :extension, :destination]
 
   @type t :: %__MODULE__{
