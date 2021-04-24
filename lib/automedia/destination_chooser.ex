@@ -22,6 +22,7 @@ defmodule Automedia.DestinationChooser do
     filename = "#{time}.#{extension}"
     destination = Path.join([
       destination_root,
+      decade(year),
       year_part,
       month_part,
       day_part,
@@ -30,4 +31,9 @@ defmodule Automedia.DestinationChooser do
     struct(movable, destination: destination)
   end
   defp choose(%Automedia.Movable{} = movable, _destination_root), do: movable
+
+  defp decade(year) do
+    d = floor(year / 10) * 10
+    "#{d}s"
+  end
 end
