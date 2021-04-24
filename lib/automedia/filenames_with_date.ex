@@ -1,7 +1,7 @@
 defmodule Automedia.FilenamesWithDate do
   @moduledoc false
 
-  @with_date_and_time ~r[\/(?:IMG|VID)_(\d{4})(\d{2})(\d{2})_(\d{6})\.(jpe?g|mp4)]
+  @with_date_and_second ~r[\/(?:IMG|VID)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})\.(jpe?g|mp4)]
 
   def find(path) do
     list_files(path)
@@ -15,18 +15,19 @@ defmodule Automedia.FilenamesWithDate do
   end
 
   defp match(pathname) do
-    match_with_date_and_time(pathname)
+    match_with_date_and_second(pathname)
   end
 
-  @spec match_with_date_and_time(Automedia.Movable.t()) :: Automedia.Movable.t() | nil
-  defp match_with_date_and_time(pathname) do
+  @spec match_with_date_and_second(Automedia.Movable.t()) :: Automedia.Movable.t() | nil
+  defp match_with_date_and_second(pathname) do
     match = Regex.run(
-      @with_date_and_time,
+      @with_date_and_second,
       pathname,
       capture: :all_but_first
     )
     if match do
-      [year, month, day, time, extension] = match
+      [year, month, day, hour, minute, second, extension] = match
+      {:ok, time} = Time.new(i(hour), i(minute), i(second))
       %Automedia.Movable{
         source: pathname,
         year: String.to_integer(year),
@@ -36,5 +37,10 @@ defmodule Automedia.FilenamesWithDate do
         extension: extension
       }
     end
+  end
+
+  defp i(string) do
+    {integer, _remainder} = Integer.parse(string)
+    integer
   end
 end

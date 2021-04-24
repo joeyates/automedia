@@ -8,7 +8,7 @@ defmodule Automedia.Movable do
     year: pos_integer(),
     month: pos_integer(),
     day: pos_integer(),
-    time: binary | nil,
+    time: Time.t() | nil,
     extension: binary,
     source: Path.t() | nil
   }
