@@ -1,6 +1,8 @@
 defmodule Automedia.Signal.Movable do
   @moduledoc false
 
+  require Logger
+
   import Automedia.ConversionHelpers, only: [i: 1]
 
   @signal_attachment ~r[
@@ -30,6 +32,7 @@ defmodule Automedia.Signal.Movable do
   defp match(pathname) do
     match = Regex.named_captures(@signal_attachment, pathname)
     if match do
+      Logger.debug "'#{pathname}' is a movable Signal file"
       %{"seconds" => s, "milliseconds" => ms, "extension" => ext} = match
       dt = DateTime.from_unix!(i(s)) |> DateTime.add(i(ms) * 1000, :microsecond)
       time = DateTime.to_time(dt)
@@ -50,6 +53,10 @@ defmodule Automedia.Signal.Movable do
     date = Date.new!(movable.year, movable.month, movable.day)
     dt = DateTime.new!(date, movable.time)
     unix = DateTime.to_unix(dt)
-    unix > timestamp
+    more_recent = unix > timestamp
+    if !more_recent do
+      Logger.debug "Skipping '#{movable.source}' as it was created before the start time (#{unix} > #{timestamp})"
+    end
+    more_recent
   end
 end
