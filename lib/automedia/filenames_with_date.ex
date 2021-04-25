@@ -20,7 +20,7 @@ defmodule Automedia.FilenamesWithDate do
       match_with_date_and_millisecond(pathname)
   end
 
-  @spec match_with_date_and_second(Automedia.Movable.t()) :: Automedia.Movable.t() | nil
+  @spec match_with_date_and_second(Path.t()) :: Automedia.Movable.t() | nil
   defp match_with_date_and_second(pathname) do
     match = Regex.run(
       @with_date_and_second,
@@ -41,7 +41,7 @@ defmodule Automedia.FilenamesWithDate do
     end
   end
 
-  @spec match_with_date_and_millisecond(Automedia.Movable.t()) :: Automedia.Movable.t() | nil
+  @spec match_with_date_and_millisecond(Path.t()) :: Automedia.Movable.t() | nil
   defp match_with_date_and_millisecond(pathname) do
     match = Regex.run(
       @with_date_and_millisecond,
