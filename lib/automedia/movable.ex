@@ -10,6 +10,6 @@ defmodule Automedia.Movable do
     day: pos_integer(),
     time: Time.t() | nil,
     extension: binary,
-    source: Path.t() | nil
+    destination: Path.t() | nil
   }
 end
