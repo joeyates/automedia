@@ -2,10 +2,11 @@ defmodule Automedia.Signal.CLI do
   @moduledoc false
 
   @switches [
-    source: :string,
     destination: :string,
-    verbose: :count,
-    quiet: :boolean
+    dry_run: :boolean,
+    quiet: :boolean,
+    source: :string,
+    verbose: :count
   ]
 
   @required [:source, :destination]
@@ -16,6 +17,6 @@ defmodule Automedia.Signal.CLI do
     options.source
     |> Automedia.Signal.Movable.find()
     |> Automedia.DestinationChooser.run(options.destination)
-    |> Enum.map(&Automedia.Move.move/1)
+    |> Enum.map(&(Automedia.Move.move(&1, dry_run: options.dry_run)))
   end
 end

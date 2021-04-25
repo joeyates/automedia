@@ -5,10 +5,11 @@ defmodule Automedia.Android.CLI do
   """
 
   @switches [
-    source: :string,
     destination: :string,
-    verbose: :count,
-    quiet: :boolean
+    dry_run: :boolean,
+    quiet: :boolean,
+    source: :string,
+    verbose: :count
   ]
 
   @required [:source, :destination]
@@ -19,6 +20,6 @@ defmodule Automedia.Android.CLI do
     options.source
     |> Automedia.Android.FilenamesWithDate.find()
     |> Automedia.DestinationChooser.run(options.destination)
-    |> Enum.map(&Automedia.Move.move/1)
+    |> Enum.map(&(Automedia.Move.move(&1, dry_run: options.dry_run)))
   end
 end
