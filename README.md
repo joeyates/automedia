@@ -2,6 +2,10 @@
 
 Store your photos and videos in a file hierarchy according to date.
 
+The naming convention is:
+
+#    2010s/2013/201304/20130426
+
 # Roadmap
 
 * Find files with date in name and move to fixed tree structure
