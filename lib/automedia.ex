@@ -12,5 +12,10 @@ defmodule Automedia do
     |> Automedia.FilenamesWithDate.find()
     |> Automedia.DestinationChooser.run(destination_root)
     |> Enum.map(&Automedia.Move.move/1)
+
+    source_path
+    |> Automedia.Signal.Movable.find()
+    |> Automedia.DestinationChooser.run(destination_root)
+    |> Enum.map(&Automedia.Move.move/1)
   end
 end
