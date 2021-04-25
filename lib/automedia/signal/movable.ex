@@ -14,11 +14,12 @@ defmodule Automedia.Signal.Movable do
     \z
   ]x
 
-  def find(path) do
+  def find(path, [from: start]) do
     list_files(path)
     |> Enum.map(&(Path.join(path, &1)))
     |> Enum.map(&match/1)
     |> Enum.filter(&(&1))
+    |> Enum.filter(&(since(&1, start)))
   end
 
   defp list_files(path) do
@@ -42,5 +43,13 @@ defmodule Automedia.Signal.Movable do
         extension: ext
       }
     end
+  end
+
+  defp since(movable, nil), do: movable
+  defp since(movable, timestamp) do
+    date = Date.new!(movable.year, movable.month, movable.day)
+    dt = DateTime.new!(date, movable.time)
+    unix = DateTime.to_unix(dt)
+    unix > timestamp
   end
 end
