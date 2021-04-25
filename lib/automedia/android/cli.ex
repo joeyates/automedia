@@ -6,7 +6,9 @@ defmodule Automedia.Android.CLI do
 
   @switches [
     source: :string,
-    destination: :string
+    destination: :string,
+    verbose: :count,
+    quiet: :boolean
   ]
 
   def run(args) do
@@ -19,12 +21,20 @@ defmodule Automedia.Android.CLI do
     end
     source = Keyword.fetch!(options, :source)
     destination = Keyword.fetch!(options, :destination)
+    verbose = Keyword.get(options, :verbose, 0)
+    quiet = Keyword.get(options, :quiet, false)
     if !File.dir?(source) do
       raise "The `--source` parameter '#{source}' is not a directory"
     end
     if !File.dir?(destination) do
       raise "The `--destination` parameter '#{destination}' is not a directory"
     end
+    level = if quiet do
+      0
+    else
+      verbose
+    end
+    Automedia.Logger.put_level(level)
 
     source
     |> Automedia.FilenamesWithDate.find()
