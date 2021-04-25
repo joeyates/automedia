@@ -3,29 +3,19 @@ defmodule Automedia.Signal.CLI do
 
   @switches [
     source: :string,
-    destination: :string
+    destination: :string,
+    verbose: :count,
+    quiet: :boolean
   ]
 
-  def run(args) do
-    {options, _rest, _errors} = OptionParser.parse(args, strict: @switches)
-    if !options[:source] do
-      raise "Please supply a `--source <PATH>` parameter"
-    end
-    if !options[:destination] do
-      raise "Please supply a `--destination <PATH>` parameter"
-    end
-    source = Keyword.fetch!(options, :source)
-    destination = Keyword.fetch!(options, :destination)
-    if !File.dir?(source) do
-      raise "The `--source` parameter '#{source}' is not a directory"
-    end
-    if !File.dir?(destination) do
-      raise "The `--destination` parameter '#{destination}' is not a directory"
-    end
+  @required [:source, :destination]
 
-    source
+  def run(args) do
+    options = Automedia.OptionParser.run(args, @switches, @required)
+
+    options.source
     |> Automedia.Signal.Movable.find()
-    |> Automedia.DestinationChooser.run(destination)
+    |> Automedia.DestinationChooser.run(options.destination)
     |> Enum.map(&Automedia.Move.move/1)
   end
 end
