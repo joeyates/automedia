@@ -1,21 +1,10 @@
 defmodule Automedia do
   @moduledoc """
-  Documentation for `Automedia`.
+  The entry point for the various renaming strategies.
   """
 
   @doc false
-  def run do
-    source_path = System.fetch_env!("SOURCE_PATH")
-    destination_root = System.fetch_env!("MEDIA_ROOT")
-
-    source_path
-    |> Automedia.FilenamesWithDate.find()
-    |> Automedia.DestinationChooser.run(destination_root)
-    |> Enum.map(&Automedia.Move.move/1)
-
-    source_path
-    |> Automedia.Signal.Movable.find()
-    |> Automedia.DestinationChooser.run(destination_root)
-    |> Enum.map(&Automedia.Move.move/1)
+  def run(["android" | args]) do
+    Automedia.Android.CLI.run(args)
   end
 end
