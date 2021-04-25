@@ -7,6 +7,7 @@ defmodule Automedia.FilenamesWithDate do
   @with_date_and_millisecond ~r[\/(?:PXL)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})(\d{3})\.(jpe?g|mp4)]
 
   def find(path) do
+    Logger.debug "Scanning '#{path}' for Android files"
     list_files(path)
     |> Enum.map(&(Path.join(path, &1)))
     |> Enum.map(&match/1)
@@ -30,6 +31,7 @@ defmodule Automedia.FilenamesWithDate do
       capture: :all_but_first
     )
     if match do
+      Logger.debug "'#{pathname}' is an Android file"
       [year, month, day, hour, minute, second, extension] = match
       {:ok, time} = Time.new(i(hour), i(minute), i(second))
       %Automedia.Movable{
@@ -51,6 +53,7 @@ defmodule Automedia.FilenamesWithDate do
       capture: :all_but_first
     )
     if match do
+      Logger.debug "'#{pathname}' is an Android file"
       [year, month, day, hour, minute, second, millisecond, extension] = match
       {:ok, time} = Time.new(i(hour), i(minute), i(second), i(millisecond) * 1000)
       %Automedia.Movable{
