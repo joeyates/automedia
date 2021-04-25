@@ -1,5 +1,7 @@
-defmodule Automedia.FilenamesWithDate do
+defmodule Automedia.Android.FilenamesWithDate do
   @moduledoc false
+
+  require Logger
 
   import Automedia.ConversionHelpers, only: [i: 1]
 

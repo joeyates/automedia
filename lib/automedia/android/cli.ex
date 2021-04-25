@@ -37,7 +37,7 @@ defmodule Automedia.Android.CLI do
     Automedia.Logger.put_level(level)
 
     source
-    |> Automedia.FilenamesWithDate.find()
+    |> Automedia.Android.FilenamesWithDate.find()
     |> Automedia.DestinationChooser.run(destination)
     |> Enum.map(&Automedia.Move.move/1)
   end
