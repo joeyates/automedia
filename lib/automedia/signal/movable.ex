@@ -39,9 +39,7 @@ defmodule Automedia.Signal.Movable do
       date = DateTime.to_date(dt)
       %Automedia.Movable{
         source: pathname,
-        year: date.year,
-        month: date.month,
-        day: date.day,
+        date: date,
         time: time,
         extension: ext
       }
@@ -50,8 +48,7 @@ defmodule Automedia.Signal.Movable do
 
   defp since(movable, nil), do: movable
   defp since(movable, timestamp) do
-    date = Date.new!(movable.year, movable.month, movable.day)
-    dt = DateTime.new!(date, movable.time)
+    dt = DateTime.new!(movable.date, movable.time)
     unix = DateTime.to_unix(dt)
     more_recent = unix > timestamp
     if !more_recent do

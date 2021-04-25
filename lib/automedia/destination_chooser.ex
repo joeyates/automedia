@@ -8,22 +8,20 @@ defmodule Automedia.DestinationChooser do
   @spec choose(Automedia.Movable.t(), binary) :: Automedia.Movable.t()
   defp choose(
     %Automedia.Movable{
-      year: year,
-      month: month,
-      day: day,
+      date: date,
       time: time,
       extension: extension
     } = movable,
     destination_root
   ) do
-    year_part = :io_lib.format("~4..0B", [year]) |> IO.chardata_to_string()
-    month_part = :io_lib.format("~s~2..0B", [year_part, month]) |> IO.chardata_to_string()
-    day_part = :io_lib.format("~s~2..0B", [month_part, day]) |> IO.chardata_to_string()
+    year_part = :io_lib.format("~4..0B", [date.year]) |> IO.chardata_to_string()
+    month_part = :io_lib.format("~s~2..0B", [year_part, date.month]) |> IO.chardata_to_string()
+    day_part = :io_lib.format("~s~2..0B", [month_part, date.day]) |> IO.chardata_to_string()
     name = time_name(time)
     filename = "#{name}.#{extension}"
     destination = Path.join([
       destination_root,
-      decade(year),
+      decade(date.year),
       year_part,
       month_part,
       day_part,

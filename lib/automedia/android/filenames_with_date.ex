@@ -35,12 +35,11 @@ defmodule Automedia.Android.FilenamesWithDate do
     if match do
       Logger.debug "'#{pathname}' is an Android file"
       [year, month, day, hour, minute, second, extension] = match
+      {:ok, date} = Date.new(i(year), i(month), i(day))
       {:ok, time} = Time.new(i(hour), i(minute), i(second))
       %Automedia.Movable{
         source: pathname,
-        year: String.to_integer(year),
-        month: String.to_integer(month),
-        day: String.to_integer(day),
+        date: date,
         time: time,
         extension: extension
       }
@@ -57,12 +56,11 @@ defmodule Automedia.Android.FilenamesWithDate do
     if match do
       Logger.debug "'#{pathname}' is an Android file"
       [year, month, day, hour, minute, second, millisecond, extension] = match
+      {:ok, date} = Date.new(i(year), i(month), i(day))
       {:ok, time} = Time.new(i(hour), i(minute), i(second), i(millisecond) * 1000)
       %Automedia.Movable{
         source: pathname,
-        year: String.to_integer(year),
-        month: String.to_integer(month),
-        day: String.to_integer(day),
+        date: date,
         time: time,
         extension: extension
       }
