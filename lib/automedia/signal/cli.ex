@@ -33,13 +33,17 @@ defmodule Automedia.Signal.CLI do
     Enum.map(movable, &(Automedia.Move.move(&1, dry_run: options.dry_run)))
   end
 
-  defp start_datetime(options) do
-    if options.start_timestamp_file do
-      if File.regular?(options.start_timestamp_file) do
-        File.read!(options.start_timestamp_file) |> i_or_nil
+  defp start_datetime(%{start_timestamp_file: pathname}) do
+    if File.regular?(pathname) do
+      timestamp = File.read!(pathname) |> i_or_nil
+      if timestamp do
+        dt = DateTime.from_unix!(timestamp)
+        Logger.debug "The Signal start timestamp file indicates only Signal files created after #{dt} are to be considered"
       end
+      timestamp
     else
-      nil
+      Logger.debug "The Signal start timestamp file does not yet exist - all matching files will be collected"
     end
   end
+  defp start_datetime(_options), do: nil
 end
