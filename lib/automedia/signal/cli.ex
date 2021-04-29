@@ -52,16 +52,10 @@ defmodule Automedia.Signal.CLI do
   def optionally_update_start_timestamp_file(_options, []), do: nil
   def optionally_update_start_timestamp_file(%{dry_run: true}, _movable), do: nil
   def optionally_update_start_timestamp_file(%{start_timestamp_file: pathname}, movable) do
-    latest = Enum.max(movable, fn m1, m2 ->
-      cond do
-        m1.date < m2.date -> 2
-        m1.date > m2.date -> 1
-        m1.time < m2.time -> 2
-        m1.time > m2.time -> 1
-        true              -> 0
-      end
-    end)
-    timestamp = DateTime.new!(latest.date, latest.time, "Etc/UTC") |> DateTime.to_unix()
+    timestamp =
+      movable
+      |> Enum.map(&(DateTime.new!(&1.date, &1.time) |> DateTime.to_unix()))
+      |> Enum.max()
     File.write!(pathname, Integer.to_string(timestamp))
   end
   def optionally_update_start_timestamp_file(_options, _movable), do: nil
