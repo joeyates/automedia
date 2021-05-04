@@ -17,7 +17,11 @@ defmodule Automedia.Signal.CLI do
   @required [:source, :destination]
 
   def run(args) do
-    options = Automedia.OptionParser.run(args, @switches, @required)
+    {:ok, options} = Automedia.OptionParser.run(
+      args,
+      switches: @switches,
+      required: @required
+    )
 
     if options.dry_run, do: Logger.debug "This is a dry run, nothing will be changed"
 

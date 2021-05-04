@@ -15,7 +15,11 @@ defmodule Automedia.Android.CLI do
   @required [:source, :destination]
 
   def run(args) do
-    options = Automedia.OptionParser.run(args, @switches, @required)
+    {:ok, options} = Automedia.OptionParser.run(
+      args,
+      switches: @switches,
+      required: @required
+    )
 
     options.source
     |> Automedia.Android.FilenamesWithDate.find()
