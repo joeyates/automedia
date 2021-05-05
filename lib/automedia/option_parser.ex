@@ -30,11 +30,11 @@ defmodule Automedia.OptionParser do
   """
   def run(args, options \\ []) do
     with {:ok, opts} <- options_map(options),
-         {:ok, switches, remaining} <- parse(args, opts),
-         {:ok} <- check_required(switches, opts),
+         {:ok, named, remaining} <- parse(args, opts),
+         {:ok} <- check_required(named, opts),
          {:ok} <- check_remaining(remaining, opts),
-         {:ok} <- setup_logger(switches) do
-      {:ok, switches, remaining}
+         {:ok} <- setup_logger(named) do
+      {:ok, named, remaining}
     else
       {:error, message} ->
         {:error, message}
@@ -57,10 +57,10 @@ defmodule Automedia.OptionParser do
     end
   end
 
-  defp check_required(switches, opts) do
+  defp check_required(named, opts) do
     required = opts[:required] || []
 
-    missing = Enum.filter(required, &(!Map.has_key?(switches, &1)))
+    missing = Enum.filter(required, &(!Map.has_key?(named, &1)))
     if length(missing) == 0 do
       {:ok}
     else
@@ -85,9 +85,9 @@ defmodule Automedia.OptionParser do
     {:error, "You supplied unexpected non-switch arguments #{inspect(remaining)}"}
   end
 
-  defp setup_logger(switches) do
-    verbose = Map.get(switches, :verbose, 0)
-    quiet = Map.get(switches, :quiet, false)
+  defp setup_logger(named) do
+    verbose = Map.get(named, :verbose, 0)
+    quiet = Map.get(named, :quiet, false)
 
     level = if quiet do
       0
