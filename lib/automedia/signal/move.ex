@@ -1,4 +1,6 @@
 defmodule Automedia.Signal.Move do
+  require Logger
+
   import Automedia.ConversionHelpers, only: [i_or_nil: 1]
 
   def run(options) do

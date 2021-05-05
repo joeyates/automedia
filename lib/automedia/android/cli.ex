@@ -4,6 +4,8 @@ defmodule Automedia.Android.CLI do
   tree under the media root according to their creation date.
   """
 
+  require Logger
+
   @switches [
     destination: :string,
     dry_run: :boolean,
