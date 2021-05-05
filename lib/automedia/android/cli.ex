@@ -15,12 +15,20 @@ defmodule Automedia.Android.CLI do
   @required [:source, :destination]
 
   def run(args) do
-    {:ok, options} = Automedia.OptionParser.run(
-      args,
-      switches: @switches,
-      required: @required
-    )
+    case Automedia.OptionParser.run(
+          args,
+          switches: @switches,
+          required: @required
+        ) do
+      {:ok, options, []} ->
+        move_android_files(options)
+      {:error, message} ->
+        Logger.error message
+        exit(1)
+    end
+  end
 
+  defp move_android_files(options) do
     options.source
     |> Automedia.Android.FilenamesWithDate.find()
     |> Automedia.DestinationChooser.run(options.destination)

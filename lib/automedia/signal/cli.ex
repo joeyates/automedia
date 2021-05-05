@@ -17,12 +17,20 @@ defmodule Automedia.Signal.CLI do
   @required [:source, :destination]
 
   def run(args) do
-    {:ok, options} = Automedia.OptionParser.run(
-      args,
-      switches: @switches,
-      required: @required
-    )
+    case Automedia.OptionParser.run(
+          args,
+          switches: @switches,
+          required: @required
+        ) do
+      {:ok, options, []} ->
+        move_signal_files(options)
+      {:error, message} ->
+        Logger.error message
+        exit(1)
+    end
+  end
 
+  defp move_signal_files(options) do
     if options.dry_run, do: Logger.debug "This is a dry run, nothing will be changed"
 
     start = start_datetime(options)
