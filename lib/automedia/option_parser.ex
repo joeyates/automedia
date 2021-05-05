@@ -1,14 +1,32 @@
 defmodule Automedia.OptionParser do
   @moduledoc """
-  Parses command arguments, returns an error if
-  required arguments are not supplied and sets the logging level
+  A project-specific command-line option parser
   """
 
-  @doc false
+  @doc ~S"""
+  Parses command arguments, returns an error if
+  required arguments are not supplied and sets the logging level
+
+    iex> Automedia.OptionParser.run(["--foo", "hi"], switches: [foo: :string])
+    {:ok, %{foo: "hi"}, []}
+
+    iex> Automedia.OptionParser.run(["-f", "hi"], switches: [foo: :string], aliases: [f: :foo])
+    {:ok, %{foo: "hi"}, []}
+
+    iex> Automedia.OptionParser.run(["--bar", "hi"], switches: [foo: :string])
+    {:error, "Unexpected parameters supplied: [\"--bar\"]"}
+
+    iex> Automedia.OptionParser.run(["non-switch"], remaining: 1)
+    {:ok, %{}, ["non-switch"]}
+
+    iex> Automedia.OptionParser.run(["pizza"])
+    {:error, "You supplied unexpected non-switch arguments [\"pizza\"]"}
+  """
   def run(args, options \\ []) do
-    with {:ok, switches, remaining} <- parse(args, options),
-         {:ok} <- check_required(switches, options),
-         {:ok} <- check_remaining(remaining, options),
+    with {:ok, opts} <- options_map(options),
+         {:ok, switches, remaining} <- parse(args, opts),
+         {:ok} <- check_required(switches, opts),
+         {:ok} <- check_remaining(remaining, opts),
          {:ok} <- setup_logger(switches) do
       {:ok, switches, remaining}
     else
@@ -17,9 +35,11 @@ defmodule Automedia.OptionParser do
     end
   end
 
-  defp parse(args, options) do
-    aliases = Keyword.get(options, :aliases, [])
-    switches = Keyword.get(options, :switches, [])
+  defp options_map(options), do: {:ok, Enum.into(options, %{})}
+
+  defp parse(args, opts) do
+    aliases = opts[:aliases] || []
+    switches = opts[:switches] || []
 
     case OptionParser.parse(args, aliases: aliases, strict: switches) do
       {named_list, remaining, []} ->
@@ -31,8 +51,9 @@ defmodule Automedia.OptionParser do
     end
   end
 
-  defp check_required(switches, options) do
-    required = Keyword.get(options, :required, [])
+  defp check_required(switches, opts) do
+    required = opts[:required] || []
+
     missing = Enum.filter(required, &(!Map.has_key?(switches, &1)))
     if length(missing) == 0 do
       {:ok}
@@ -41,13 +62,14 @@ defmodule Automedia.OptionParser do
     end
   end
 
-  defp check_remaining(_remaining, remaining: nil), do: {:ok}
-  defp check_remaining(remaining, remaining: count)
-  when length(remaining) == count do
-    {:ok}
-  end
-  defp check_remaining(_remaining, remaining: count) do
+  defp check_remaining(remaining, %{remaining: count})
+  when length(remaining) == count, do: {:ok}
+  defp check_remaining(_remaining, %{remaining: count}) do
     {:error, "Supply #{count} non-switch arguments"}
+  end
+  defp check_remaining([], _options), do: {:ok}
+  defp check_remaining(remaining, _opts) do
+    {:error, "You supplied unexpected non-switch arguments #{inspect(remaining)}"}
   end
 
   defp setup_logger(switches) do
