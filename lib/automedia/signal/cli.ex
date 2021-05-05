@@ -4,6 +4,7 @@ defmodule Automedia.Signal.CLI do
   require Logger
 
   alias Automedia.Signal.UnpackBackup
+  alias Automedia.Signal.Move
 
   @move_switches [
     destination: :string,
@@ -48,7 +49,8 @@ defmodule Automedia.Signal.CLI do
           required: @move_required
         ) do
       {:ok, options, []} ->
-        Automedia.Signal.Move.run(options)
+        struct!(Move, options)
+        |> Move.run()
       {:error, message} ->
         Logger.error message
         exit(1)
