@@ -33,6 +33,7 @@ defmodule Automedia.Signal.Move do
       timestamp
     else
       Logger.debug "The Signal start timestamp file does not yet exist - all matching files will be collected"
+      nil
     end
   end
   defp start_datetime(_options), do: nil
