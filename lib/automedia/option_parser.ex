@@ -86,7 +86,7 @@ defmodule Automedia.OptionParser do
   end
 
   defp setup_logger(named) do
-    verbose = Map.get(named, :verbose, 0)
+    verbose = Map.get(named, :verbose, 1)
     quiet = Map.get(named, :quiet, false)
 
     level = if quiet do
