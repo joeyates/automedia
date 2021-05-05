@@ -6,6 +6,8 @@ defmodule Automedia.Android.CLI do
 
   require Logger
 
+  alias Automedia.Android.Move
+
   @switches [
     destination: :string,
     dry_run: :boolean,
@@ -23,17 +25,12 @@ defmodule Automedia.Android.CLI do
           required: @required
         ) do
       {:ok, options, []} ->
-        move_android_files(options)
+        struct!(Move, options)
+        |> Move.run()
       {:error, message} ->
         Logger.error message
         exit(1)
     end
   end
 
-  defp move_android_files(options) do
-    options.source
-    |> Automedia.Android.FilenamesWithDate.find()
-    |> Automedia.DestinationChooser.run(options.destination)
-    |> Enum.map(&(Automedia.Move.move(&1, dry_run: options.dry_run)))
-  end
 end
