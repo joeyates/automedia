@@ -21,9 +21,9 @@ defmodule Automedia.OptionParser do
     switches = Keyword.get(options, :switches, [])
 
     case OptionParser.parse(args, strict: switches) do
-      {switch_list, remaining, []} ->
-        switches = Enum.into(switch_list, %{})
-        {:ok, switches, remaining}
+      {named_list, remaining, []} ->
+        named = Enum.into(named_list, %{})
+        {:ok, named, remaining}
       {_, _, invalid} ->
         keys = Enum.map(invalid, fn {key, _value} -> key end)
         {:error, "Unexpected parameters supplied: #{inspect(keys)}"}
