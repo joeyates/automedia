@@ -18,9 +18,10 @@ defmodule Automedia.OptionParser do
   end
 
   defp parse(args, options) do
+    aliases = Keyword.get(options, :aliases, [])
     switches = Keyword.get(options, :switches, [])
 
-    case OptionParser.parse(args, strict: switches) do
+    case OptionParser.parse(args, aliases: aliases, strict: switches) do
       {named_list, remaining, []} ->
         named = Enum.into(named_list, %{})
         {:ok, named, remaining}
