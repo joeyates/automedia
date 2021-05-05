@@ -21,6 +21,12 @@ defmodule Automedia.OptionParser do
 
     iex> Automedia.OptionParser.run(["pizza"])
     {:error, "You supplied unexpected non-switch arguments [\"pizza\"]"}
+
+    iex> Automedia.OptionParser.run(["first", "second"], remaining: 2..3)
+    {:ok, %{}, ["first", "second"]}
+
+    iex> Automedia.OptionParser.run(["first"], remaining: 2..3)
+    {:error, "Supply 2..3 non-switch arguments"}
   """
   def run(args, options \\ []) do
     with {:ok, opts} <- options_map(options),
@@ -62,6 +68,13 @@ defmodule Automedia.OptionParser do
     end
   end
 
+  defp check_remaining(remaining, %{remaining: %Range{} = range}) do
+    if length(remaining) in range do
+      {:ok}
+    else
+      {:error, "Supply #{inspect(range)} non-switch arguments"}
+    end
+  end
   defp check_remaining(remaining, %{remaining: count})
   when length(remaining) == count, do: {:ok}
   defp check_remaining(_remaining, %{remaining: count}) do
