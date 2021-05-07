@@ -11,17 +11,19 @@ defmodule Automedia.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: extra_applications(Mix.env())
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
+  defp extra_applications(:test), do: [:logger, :mox]
+  defp extra_applications(_env), do: [:logger]
+
   defp deps do
     [
-      {:credo, ">= 0.0.0", only: [:dev, :test], runtime: false}
+      {:credo, ">= 0.0.0", only: [:dev, :test], runtime: false},
+      {:mox, ">= 0.0.0", only: :test, runtime: false}
     ]
   end
 end
