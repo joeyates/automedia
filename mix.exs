@@ -6,6 +6,7 @@ defmodule Automedia.MixProject do
       app: :automedia,
       version: "0.1.0",
       elixir: "~> 1.11",
+      elixirc_paths: elixirc_paths(Mix.env),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -16,6 +17,9 @@ defmodule Automedia.MixProject do
       extra_applications: extra_applications(Mix.env())
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support/mocks"]
+  defp elixirc_paths(_env), do: ["lib"]
 
   defp extra_applications(:test), do: [:logger, :mox]
   defp extra_applications(_env), do: [:logger]
