@@ -4,7 +4,7 @@ defmodule Automedia.Signal.Move do
   import Automedia.ConversionHelpers, only: [i_or_nil: 1]
 
   @enforce_keys ~w(destination source)a
-  defstruct ~w(destination dry_run start_timestamp_file quiet source verbose)a
+  defstruct ~w(destination dry_run quiet source start_timestamp_file verbose)a
 
   def run(%__MODULE__{} = options) do
     if options.dry_run, do: Logger.debug "This is a dry run, nothing will be changed"
