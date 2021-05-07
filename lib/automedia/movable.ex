@@ -1,7 +1,8 @@
 defmodule Automedia.Movable do
   @moduledoc false
 
-  defstruct [:source, :date, :time, :extension, :destination]
+  @enforce_keys ~w(date extension source)a
+  defstruct ~w(date destination extension source time)a
 
   @type t :: %__MODULE__{
     source: Path.t(),
