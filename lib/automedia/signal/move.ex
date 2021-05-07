@@ -18,7 +18,7 @@ defmodule Automedia.Signal.Move do
 
     if length(movable) == 0, do: Logger.debug "No Signal files found"
 
-    Enum.map(movable, &(Automedia.Move.move(&1, dry_run: options.dry_run)))
+    Enum.each(movable, &(Automedia.Move.move(&1, dry_run: options.dry_run)))
 
     optionally_update_start_timestamp_file(options, movable)
   end
