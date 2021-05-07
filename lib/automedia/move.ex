@@ -5,18 +5,20 @@ defmodule Automedia.Move do
 
   require Automedia.Movable
 
+  @file_module Application.get_env(:automedia, :file_module, File)
+
   def move(%Automedia.Movable{source: source, destination: destination}, options) do
     dry_run = Keyword.get(options, :dry_run, false)
     path = Path.dirname(destination)
-    if !File.dir?(path) do
+    if !@file_module.dir?(path) do
       Logger.info "Creating directory '#{path}'"
-      if !dry_run, do: File.mkdir_p!(path)
+      if !dry_run, do: @file_module.mkdir_p!(path)
     end
-    if File.regular?(destination) do
+    if @file_module.regular?(destination) do
       Logger.info "Skipping move of '#{source}' to '#{destination}' - destination file already exists"
     else
       Logger.info "Moving '#{source}' to '#{destination}'"
-      if !dry_run, do: File.rename!(source, destination)
+      if !dry_run, do: @file_module.rename!(source, destination)
     end
   end
 end
