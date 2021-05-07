@@ -40,6 +40,13 @@ defmodule Automedia.MoveTest do
     Automedia.Move.move(movable, [])
   end
 
+  @tag destination_dir_exists: true
+  test "in a dry run, it doesn't try to create the destination directory", %{movable: movable} do
+    expect(MockFile, :mkdir_p!, 0, fn _path -> nil end)
+
+    Automedia.Move.move(movable, dry_run: true)
+  end
+
   test "it moves the file", %{movable: movable} do
     %{source: source, destination: destination} = movable
     expect(MockFile, :rename!, fn ^source, ^destination -> :ok end)
@@ -52,5 +59,11 @@ defmodule Automedia.MoveTest do
     expect(MockFile, :rename!, 0, fn _source, _destination -> :ok end)
 
     Automedia.Move.move(movable, [])
+  end
+
+  test "in a dry run, it doesn't move the file", %{movable: movable} do
+    expect(MockFile, :rename!, 0, fn _source, _destination -> :ok end)
+
+    Automedia.Move.move(movable, dry_run: true)
   end
 end
