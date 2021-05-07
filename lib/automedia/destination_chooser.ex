@@ -1,6 +1,7 @@
 defmodule Automedia.DestinationChooser do
   @moduledoc false
 
+  @callback run([Automedia.Movable.t()], binary) :: [Automedia.Movable.t()]
   def run(movable_files, destination_root) do
     Enum.map(movable_files, &(choose(&1, destination_root)))
   end

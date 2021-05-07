@@ -6,6 +6,21 @@ defmodule Automedia.Signal.Move do
   @enforce_keys ~w(destination source)a
   defstruct ~w(destination dry_run quiet source start_timestamp_file verbose)a
 
+  @automedia_destination_chooser Application.get_env(:automedia, :automedia_destination_chooser, Automedia.DestinationChooser)
+  @automedia_move Application.get_env(:automedia, :automedia_move, Automedia.Move)
+  @automedia_signal_movable Application.get_env(:automedia, :automedia_signal_movable, Automedia.Signal.Movable)
+  @file_module Application.get_env(:automedia, :file_module, File)
+
+  @type t :: %__MODULE__{
+    destination: Path.t(),
+    dry_run: boolean(),
+    quiet: boolean(),
+    source: Path.t(),
+    start_timestamp_file: Path.t(),
+    verbose: integer()
+  }
+
+  @callback run(__MODULE__.t()) :: {:ok}
   def run(%__MODULE__{} = options) do
     if options.dry_run, do: Logger.debug "This is a dry run, nothing will be changed"
 
@@ -13,21 +28,22 @@ defmodule Automedia.Signal.Move do
 
     movable =
       options.source
-      |> Automedia.Signal.Movable.find(from: start)
-      |> Automedia.DestinationChooser.run(options.destination)
+      |> @automedia_signal_movable.find(from: start)
+      |> @automedia_destination_chooser.run(options.destination)
 
     if length(movable) == 0, do: Logger.debug "No Signal files found"
 
-    Enum.each(movable, &(Automedia.Move.move(&1, dry_run: options.dry_run)))
+    Enum.each(movable, &(@automedia_move.move(&1, dry_run: options.dry_run)))
 
     optionally_update_start_timestamp_file(movable, options)
 
+    {:ok}
   end
 
   defp start_datetime(%{start_timestamp_file: nil}), do: nil
   defp start_datetime(%{start_timestamp_file: pathname}) do
-    if File.regular?(pathname) do
-      timestamp = File.read!(pathname) |> i_or_nil
+    if @file_module.regular?(pathname) do
+      timestamp = @file_module.read!(pathname) |> i_or_nil
       if timestamp do
         dt = DateTime.from_unix!(timestamp)
         Logger.debug "The Signal start timestamp file indicates only Signal files created after #{dt} are to be considered"
@@ -47,6 +63,6 @@ defmodule Automedia.Signal.Move do
       movable
       |> Enum.map(&(DateTime.new!(&1.date, &1.time) |> DateTime.to_unix()))
       |> Enum.max()
-    File.write!(pathname, Integer.to_string(timestamp))
+    @file_module.write!(pathname, Integer.to_string(timestamp))
   end
 end

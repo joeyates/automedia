@@ -4,5 +4,3 @@ defmodule FileBehaviour do
   @callback regular?(Path.t()) :: boolean()
   @callback rename!(Path.t(), Path.t()) :: :ok
 end
-
-Mox.defmock(MockFile, for: FileBehaviour)

@@ -16,6 +16,7 @@ defmodule Automedia.Signal.Movable do
     \z
   ]x
 
+  @callback find(Path.t(), keyword()) :: [Path.t()]
   def find(path, [from: start]) do
     list_files(path)
     |> Enum.map(&(Path.join(path, &1)))

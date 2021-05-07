@@ -18,7 +18,7 @@ defmodule Automedia.MixProject do
     ]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "test/support/mocks"]
+  defp elixirc_paths(:test), do: ["lib", "test/support", "test/support/mocks"]
   defp elixirc_paths(_env), do: ["lib"]
 
   defp extra_applications(:test), do: [:logger, :mox]
