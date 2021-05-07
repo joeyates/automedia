@@ -20,7 +20,8 @@ defmodule Automedia.Signal.Move do
 
     Enum.each(movable, &(Automedia.Move.move(&1, dry_run: options.dry_run)))
 
-    optionally_update_start_timestamp_file(options, movable)
+    optionally_update_start_timestamp_file(movable, options)
+
   end
 
   defp start_datetime(%{start_timestamp_file: nil}), do: nil
@@ -38,10 +39,10 @@ defmodule Automedia.Signal.Move do
     end
   end
 
-  def optionally_update_start_timestamp_file(_options, []), do: nil
-  def optionally_update_start_timestamp_file(%{dry_run: true}, _movable), do: nil
+  def optionally_update_start_timestamp_file([], _options), do: nil
+  def optionally_update_start_timestamp_file(_movable, %{dry_run: true}), do: nil
   def optionally_update_start_timestamp_file(_movable, %{start_timestamp_file: nil}), do: nil
-  def optionally_update_start_timestamp_file(%{start_timestamp_file: pathname}, movable) do
+  def optionally_update_start_timestamp_file(movable, %{start_timestamp_file: pathname}) do
     timestamp =
       movable
       |> Enum.map(&(DateTime.new!(&1.date, &1.time) |> DateTime.to_unix()))
