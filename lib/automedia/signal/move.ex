@@ -23,6 +23,7 @@ defmodule Automedia.Signal.Move do
     optionally_update_start_timestamp_file(options, movable)
   end
 
+  defp start_datetime(%{start_timestamp_file: nil}), do: nil
   defp start_datetime(%{start_timestamp_file: pathname}) do
     if File.regular?(pathname) do
       timestamp = File.read!(pathname) |> i_or_nil
@@ -36,10 +37,10 @@ defmodule Automedia.Signal.Move do
       nil
     end
   end
-  defp start_datetime(_options), do: nil
 
   def optionally_update_start_timestamp_file(_options, []), do: nil
   def optionally_update_start_timestamp_file(%{dry_run: true}, _movable), do: nil
+  def optionally_update_start_timestamp_file(_movable, %{start_timestamp_file: nil}), do: nil
   def optionally_update_start_timestamp_file(%{start_timestamp_file: pathname}, movable) do
     timestamp =
       movable
@@ -47,5 +48,4 @@ defmodule Automedia.Signal.Move do
       |> Enum.max()
     File.write!(pathname, Integer.to_string(timestamp))
   end
-  def optionally_update_start_timestamp_file(_options, _movable), do: nil
 end
