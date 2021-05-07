@@ -48,7 +48,7 @@ defmodule Automedia.MoveTest do
   end
 
   @tag destination_file_exists: true
-  test "when the destinbation file exists, it doesn't move the file", %{movable: movable} do
+  test "when the destination file exists, it doesn't move the file", %{movable: movable} do
     expect(MockFile, :rename!, 0, fn _source, _destination -> :ok end)
 
     Automedia.Move.move(movable, [])
