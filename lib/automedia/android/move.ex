@@ -3,9 +3,9 @@ defmodule Automedia.Android.Move do
   defstruct ~w(destination dry_run quiet source verbose)a
 
   def run(%__MODULE__{} = options) do
-    options.source
-    |> Automedia.Android.FilenamesWithDate.find()
-    |> Automedia.DestinationChooser.run(options.destination)
-    |> Enum.map(&(Automedia.Move.move(&1, dry_run: options.dry_run)))
+    with {:ok, movables} <- Automedia.Android.FilenamesWithDate.find(options.source),
+         movables <- Automedia.DestinationChooser.run(movables, options.destination) do
+         Enum.map(movables, &(Automedia.Move.move(&1, dry_run: options.dry_run)))
+    end
   end
 end
