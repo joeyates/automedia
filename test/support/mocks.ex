@@ -1,5 +1,7 @@
 Mox.defmock(MockFile, for: FileBehaviour)
+Mox.defmock(MockSystem, for: SystemBehaviour)
 Mox.defmock(Automedia.MockDestinationChooser, for: Automedia.DestinationChooser)
 Mox.defmock(Automedia.MockMove, for: Automedia.Move)
+Mox.defmock(Automedia.Signal.MockBackups, for: Automedia.Signal.Backups)
 Mox.defmock(Automedia.Signal.MockMovable, for: Automedia.Signal.Movable)
 Mox.defmock(Automedia.Signal.MockTimestamp, for: Automedia.Signal.Timestamp)

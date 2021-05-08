@@ -4,11 +4,16 @@ defmodule Automedia.Signal.UnpackBackup do
 
   require Logger
 
+  @file_module Application.get_env(:automedia, :file_module, File)
+  @system_module Application.get_env(:automedia, :system_module, System)
+  @signal_backups Application.get_env(:automedia, :signal_backups, Automedia.Signal.Backups)
+
   def run(%__MODULE__{} = options) do
     with {:ok, options} <- choose_latest_backup(options),
          {:ok} <- check_password_file(options),
-         {:ok} <- ensure_destination_directory(options) do
-       if !options.dry_run, do: unpack(options)
+         {:ok} <- ensure_destination_directory(options),
+         {:ok} <- unpack(options) do
+       {:ok}
     else
       {:error, message} ->
         Logger.error message
@@ -17,21 +22,20 @@ defmodule Automedia.Signal.UnpackBackup do
   end
 
   defp choose_latest_backup(options) do
-    case Automedia.Signal.Backups.from(options.source) do
-      [] ->
+    case @signal_backups.from(options.source) do
+      {:ok, []} ->
         {:error, "No Signal backups found in '#{options.source}'"}
-      backups ->
+      {:ok, backups} ->
         latest = backups |> Enum.reverse |> hd()
-        pathname = Path.join(options.source, latest)
         {
           :ok,
-          struct!(options, latest: pathname)
+          struct!(options, latest: latest)
         }
     end
   end
 
   defp check_password_file(options) do
-    if File.regular?(options.password_file) do
+    if @file_module.regular?(options.password_file) do
       {:ok}
     else
       {:error, "No password file found at #{options.password_file}"}
@@ -39,26 +43,33 @@ defmodule Automedia.Signal.UnpackBackup do
   end
 
   defp ensure_destination_directory(options) do
-    if File.dir?(options.destination) do
+    if @file_module.dir?(options.destination) do
       Logger.debug "Deleting existing directory '#{options.destination}'"
-      if !options.dry_run, do: File.rm_rf!(options.destination)
+      if !options.dry_run, do: @file_module.rm_rf!(options.destination)
     end
 
     Logger.debug "Creating directory '#{options.destination}'"
-    if !options.dry_run, do: File.mkdir_p!(options.destination)
+    if !options.dry_run, do: @file_module.mkdir_p!(options.destination)
 
     {:ok}
   end
 
+  defp unpack(%__MODULE__{dry_run: true}), do: {:ok}
   defp unpack(options) do
-    System.cmd(
-      "signal-backup-decode",
-      [
-        "--verbosity", "INFO",
-        "--output-path", options.destination,
-        "--password-file", options.password_file,
-        options.latest
-      ]
-    )
+    case @system_module.cmd(
+          "signal-backup-decode",
+          [
+            "--verbosity", "INFO",
+            "--output-path", options.destination,
+            "--password-file", options.password_file,
+            options.latest
+          ],
+          stderr_to_stdout: true
+        ) do
+      {"", 0} ->
+        {:ok}
+      {error, _code} ->
+        {:error, "Failed to run signal-backup-decode. Error: #{error}"}
+    end
   end
 end
