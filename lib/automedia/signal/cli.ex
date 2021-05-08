@@ -28,6 +28,9 @@ defmodule Automedia.Signal.CLI do
 
   @unpack_required ~w(destination password_file source)a
 
+  @signal_move Application.get_env(:automedia, :signal_move, Automedia.Signal.Move)
+  @signal_unpack_backup Application.get_env(:automedia, :signal_unpack_backup, Automedia.Signal.UnpackBackup)
+
   def run(["unpack" | args]) do
     case Automedia.OptionParser.run(
           args,
@@ -36,7 +39,7 @@ defmodule Automedia.Signal.CLI do
         ) do
       {:ok, options, []} ->
         struct!(UnpackBackup, options)
-        |> UnpackBackup.run()
+        |> @signal_unpack_backup.run()
       {:error, message} ->
         Logger.error message
         exit(1)
@@ -50,7 +53,7 @@ defmodule Automedia.Signal.CLI do
         ) do
       {:ok, options, []} ->
         struct!(Move, options)
-        |> Move.run()
+        |> @signal_move.run()
       {:error, message} ->
         Logger.error message
         exit(1)

@@ -8,6 +8,7 @@ defmodule Automedia.Signal.UnpackBackup do
   @system_module Application.get_env(:automedia, :system_module, System)
   @signal_backups Application.get_env(:automedia, :signal_backups, Automedia.Signal.Backups)
 
+  @callback run(__MODULE__) :: {:ok}
   def run(%__MODULE__{} = options) do
     with {:ok, options} <- choose_latest_backup(options),
          {:ok} <- check_password_file(options),

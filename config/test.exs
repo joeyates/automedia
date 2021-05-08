@@ -7,6 +7,8 @@ config :automedia, move: Automedia.MockMove
 config :automedia, android_move: Automedia.Android.MockMove
 config :automedia, signal_backups: Automedia.Signal.MockBackups
 config :automedia, signal_movable: Automedia.Signal.MockMovable
+config :automedia, signal_move: Automedia.Signal.MockMove
 config :automedia, signal_timestamp: Automedia.Signal.MockTimestamp
+config :automedia, signal_unpack_backup: Automedia.Signal.MockUnpackBackup
 
 config :logger, backends: []
