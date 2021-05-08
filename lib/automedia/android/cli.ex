@@ -18,6 +18,8 @@ defmodule Automedia.Android.CLI do
 
   @required [:source, :destination]
 
+  @android_move Application.get_env(:automedia, :android_move, Move)
+
   def run(args) do
     case Automedia.OptionParser.run(
           args,
@@ -26,11 +28,10 @@ defmodule Automedia.Android.CLI do
         ) do
       {:ok, options, []} ->
         struct!(Move, options)
-        |> Move.run()
+        |> @android_move.run()
       {:error, message} ->
         Logger.error message
         exit(1)
     end
   end
-
 end
