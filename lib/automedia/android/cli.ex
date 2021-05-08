@@ -1,7 +1,7 @@
 defmodule Automedia.Android.CLI do
   @moduledoc """
-  Scans all source paths for media files and moves them to the directory
-  tree under the media root according to their creation date.
+  Scans the source path for Android media files and moves them to the directory
+  tree under the supplied root according to their creation date.
   """
 
   require Logger
