@@ -1,7 +1,33 @@
 defmodule Automedia.DestinationChooser do
-  @moduledoc false
+  @moduledoc """
+  Adds a destination path to a list of movables
+  """
 
   @callback run([Automedia.Movable.t()], binary) :: [Automedia.Movable.t()]
+  @doc ~S"""
+  Calculates the destination path based on date, time (in seconds) and extension:
+
+    iex> Automedia.DestinationChooser.run([
+    ...>   %Automedia.Movable{
+    ...>     date: Date.new!(2020, 1, 1),
+    ...>     extension: "ext",
+    ...>     source: nil,
+    ...>     time: Time.new!(15, 1, 1)
+    ...>   }
+    ...> ], "/base")
+    [%Automedia.Movable{date: ~D[2020-01-01], destination: "/base/2020s/2020/202001/20200101/150101.ext", extension: "ext", source: nil, time: ~T[15:01:01]}]
+
+  When the supplied time includes a fractional part, it includes milliseconds:
+    iex> Automedia.DestinationChooser.run([
+    ...>   %Automedia.Movable{
+    ...>     date: Date.new!(2020, 1, 1),
+    ...>     extension: "ext",
+    ...>     source: nil,
+    ...>     time: Time.new!(15, 1, 1, {123000, 3})
+    ...>   }
+    ...> ], "/base")
+    [%Automedia.Movable{date: ~D[2020-01-01], destination: "/base/2020s/2020/202001/20200101/150101123.ext", extension: "ext", source: nil, time: ~T[15:01:01.123]}]
+  """
   def run(movable_files, destination_root) do
     Enum.map(movable_files, &(choose(&1, destination_root)))
   end
@@ -32,7 +58,7 @@ defmodule Automedia.DestinationChooser do
   end
   defp choose(%Automedia.Movable{} = movable, _destination_root), do: movable
 
-  defp time_name(%Time{hour: h, minute: m, second: s, microsecond: 0}) do
+  defp time_name(%Time{hour: h, minute: m, second: s, microsecond: {0, _precision}}) do
     :io_lib.format("~2..0B~2..0B~2..0B", [h, m, s])
   end
   defp time_name(%Time{hour: h, minute: m, second: s, microsecond: {us, _precision}}) do
