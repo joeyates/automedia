@@ -5,24 +5,17 @@ defmodule Automedia.Signal.MoveTest do
   setup :verify_on_exit!
 
   setup context do
-    destination_path = "/destination/path"
-    timestamp_path = "/path/to/timestamp"
-    timestamp_exists = Map.get(context, :timestamp_exists, false)
     dry_run = Map.get(context, :dry_run, false)
-    movable_file = "/movable/file"
 
-    movable = %Automedia.Movable{
-      date: nil,
-      extension: nil,
-      source: movable_file
-    }
+    movable = %Automedia.Movable{date: nil, extension: nil, source: nil}
 
-    stub(MockFile, :regular?, fn ^timestamp_path -> timestamp_exists end)
-    stub(Automedia.Signal.MockMovable, :find, fn _, _ -> [movable] end)
     stub(Automedia.MockDestinationChooser, :run, fn _, _ -> [movable] end)
+    stub(Automedia.Signal.MockMovable, :find, fn _, _ -> [movable] end)
+    stub(Automedia.Signal.MockTimestamp, :optionally_read, fn _ -> {:ok, 12345} end)
+    stub(Automedia.Signal.MockTimestamp, :optionally_write, fn _, _ -> {:ok} end)
 
     options = %Automedia.Signal.Move{
-      destination: destination_path,
+      destination: nil,
       dry_run: dry_run,
       source: nil
     }
