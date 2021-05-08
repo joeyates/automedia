@@ -1,10 +1,16 @@
 defmodule Automedia.Signal.Backups do
   @moduledoc false
 
+  @file_module Application.get_env(:automedia, :file_module, File)
+
   def from(path) do
-    File.ls!(path)
-    |> Enum.filter(&is_signal_backup?/1)
-    |> Enum.sort()
+    {
+      :ok,
+      @file_module.ls!(path)
+      |> Enum.filter(&is_signal_backup?/1)
+      |> Enum.map(&(Path.join(path, &1)))
+      |> Enum.sort()
+    }
   end
 
   defp is_signal_backup?(filename) do
