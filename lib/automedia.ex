@@ -3,11 +3,14 @@ defmodule Automedia do
   The entry point for the various renaming strategies.
   """
 
+  @android_cli Application.get_env(:automedia, :android_cli, Automedia.Android.CLI)
+  @signal_cli Application.get_env(:automedia, :signal_cli, Automedia.Signal.CLI)
+
   @doc false
   def run(["android" | args]) do
-    Automedia.Android.CLI.run(args)
+    {:ok} = @android_cli.run(args)
   end
   def run(["signal" | args]) do
-    Automedia.Signal.CLI.run(args)
+    {:ok} = @signal_cli.run(args)
   end
 end

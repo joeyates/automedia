@@ -31,6 +31,7 @@ defmodule Automedia.Signal.CLI do
   @signal_move Application.get_env(:automedia, :signal_move, Automedia.Signal.Move)
   @signal_unpack_backup Application.get_env(:automedia, :signal_unpack_backup, Automedia.Signal.UnpackBackup)
 
+  @callback run([String.t()]) :: {:ok}
   def run(["unpack" | args]) do
     case Automedia.OptionParser.run(
           args,
@@ -38,8 +39,9 @@ defmodule Automedia.Signal.CLI do
           required: @unpack_required
         ) do
       {:ok, options, []} ->
-        struct!(UnpackBackup, options)
-        |> @signal_unpack_backup.run()
+        {:ok} =
+          struct!(UnpackBackup, options)
+          |> @signal_unpack_backup.run()
       {:error, message} ->
         Logger.error message
         exit(1)
@@ -52,8 +54,9 @@ defmodule Automedia.Signal.CLI do
           required: @move_required
         ) do
       {:ok, options, []} ->
-        struct!(Move, options)
-        |> @signal_move.run()
+        {:ok} =
+          struct!(Move, options)
+          |> @signal_move.run()
       {:error, message} ->
         Logger.error message
         exit(1)
