@@ -1,4 +1,4 @@
-defmodule Automedia.Android.FilenamesWithDate do
+defmodule Automedia.Android.Movable do
   @moduledoc false
 
   require Logger

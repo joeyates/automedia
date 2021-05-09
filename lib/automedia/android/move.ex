@@ -4,7 +4,7 @@ defmodule Automedia.Android.Move do
 
   @callback run(__MODULE__) :: {:ok}
   def run(%__MODULE__{} = options) do
-    with {:ok, movables} <- Automedia.Android.FilenamesWithDate.find(options.source),
+    with {:ok, movables} <- Automedia.Android.Movable.find(options.source),
          movables <- Automedia.DestinationChooser.run(movables, options.destination) do
       Enum.each(movables, &(Automedia.Move.move(&1, dry_run: options.dry_run)))
       {:ok}
