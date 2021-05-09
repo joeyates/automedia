@@ -7,6 +7,7 @@ defmodule Automedia do
   @signal_cli Application.get_env(:automedia, :signal_cli, Automedia.Signal.CLI)
 
   @doc false
+  @callback run([String.t()]) :: {:ok}
   def run(["android" | args]) do
     {:ok} = @android_cli.run(args)
   end

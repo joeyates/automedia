@@ -1,5 +1,6 @@
 Mox.defmock(MockFile, for: FileBehaviour)
 Mox.defmock(MockSystem, for: SystemBehaviour)
+Mox.defmock(MockAutomedia, for: Automedia)
 Mox.defmock(Automedia.MockDestinationChooser, for: Automedia.DestinationChooser)
 Mox.defmock(Automedia.MockMove, for: Automedia.Move)
 Mox.defmock(Automedia.Android.MockCLI, for: Automedia.Android.CLI)

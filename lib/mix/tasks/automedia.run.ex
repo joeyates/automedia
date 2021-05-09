@@ -6,7 +6,9 @@ defmodule Mix.Tasks.Automedia.Run do
   """
   @shortdoc "Moves files from source paths to media directories"
 
+  @automedia Application.get_env(:automedia, :automedia, Automedia)
+
   def run(args) do
-    Automedia.run(args)
+    {:ok} = @automedia.run(args)
   end
 end
