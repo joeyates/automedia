@@ -7,8 +7,7 @@ defmodule Automedia.Signal.Movable do
 
   @signal_attachment ~r[
     \/
-    (?<seconds>\d{10})
-    (?<milliseconds>\d{3})
+    (?<milliseconds>\d{13})
     _
     (?<counter>\d+)
     \.
@@ -34,8 +33,8 @@ defmodule Automedia.Signal.Movable do
     match = Regex.named_captures(@signal_attachment, pathname)
     if match do
       Logger.debug "'#{pathname}' is a movable Signal file"
-      %{"seconds" => s, "milliseconds" => ms, "extension" => ext} = match
-      dt = DateTime.from_unix!(i(s)) |> DateTime.add(i(ms) * 1000, :microsecond)
+      %{"milliseconds" => ms, "extension" => ext} = match
+      dt = DateTime.from_unix!(i(ms), :millisecond)
       time = DateTime.to_time(dt)
       date = DateTime.to_date(dt)
       %Automedia.Movable{
