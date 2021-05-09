@@ -15,17 +15,25 @@ defmodule Automedia.Signal.Movable do
     \z
   ]x
 
+  @file_module Application.get_env(:automedia, :file_module, File)
+
   @callback find(Path.t(), keyword()) :: [Path.t()]
-  def find(path, [from: start]) do
-    list_files(path)
-    |> Enum.map(&(Path.join(path, &1)))
-    |> Enum.map(&match/1)
-    |> Enum.filter(&(&1))
-    |> Enum.filter(&(since(&1, start)))
+  @callback find(Path.t()) :: [Path.t()]
+  def find(path, options \\ []) do
+    start = Keyword.get(options, :from)
+
+    {
+      :ok,
+      list_files(path)
+      |> Enum.map(&(Path.join(path, &1)))
+      |> Enum.map(&match/1)
+      |> Enum.filter(&(&1))
+      |> Enum.filter(&(since(&1, start)))
+    }
   end
 
   defp list_files(path) do
-    File.ls!(path)
+    @file_module.ls!(path)
   end
 
   @spec match(Path.t()) :: Automedia.Movable.t() | nil
@@ -49,11 +57,11 @@ defmodule Automedia.Signal.Movable do
   defp since(movable, nil), do: movable
   defp since(movable, timestamp) do
     dt = DateTime.new!(movable.date, movable.time)
-    unix = DateTime.to_unix(dt)
-    more_recent = unix > timestamp
-    if !more_recent do
-      Logger.debug "Skipping '#{movable.source}' as it was created before the start time (#{unix} > #{timestamp})"
+    filetime = DateTime.to_unix(dt)
+    older = filetime < timestamp
+    if older do
+      Logger.debug "Skipping '#{movable.source}' as it was created before the start time (#{filetime} < #{timestamp})"
     end
-    more_recent
+    !older
   end
 end

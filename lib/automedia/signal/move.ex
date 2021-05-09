@@ -24,16 +24,18 @@ defmodule Automedia.Signal.Move do
 
     {:ok, start} = @signal_timestamp.optionally_read(options)
 
-    movable =
-      options.source
-      |> @signal_movable.find(from: start)
-      |> @destination_chooser.run(options.destination)
+    with {:ok, movables} <- @signal_movable.find(options.source, from: start),
+         movables <- @destination_chooser.run(movables, options.destination),
+         {:ok} <- move(movables, options),
+         {:ok} <- @signal_timestamp.optionally_write(movables, options) do
+      {:ok}
+    end
+  end
 
-    if length(movable) == 0, do: Logger.debug "No Signal files found"
+  defp move(movables, options) do
+    if length(movables) == 0, do: Logger.debug "No Signal files found"
 
-    Enum.each(movable, &(@move.move(&1, dry_run: options.dry_run)))
-
-    @signal_timestamp.optionally_write(movable, options)
+    Enum.each(movables, &(@move.move(&1, dry_run: options.dry_run)))
 
     {:ok}
   end

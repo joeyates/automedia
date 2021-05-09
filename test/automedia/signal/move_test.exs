@@ -10,7 +10,7 @@ defmodule Automedia.Signal.MoveTest do
     movable = %Automedia.Movable{date: nil, extension: nil, source: nil}
 
     stub(Automedia.MockDestinationChooser, :run, fn _, _ -> [movable] end)
-    stub(Automedia.Signal.MockMovable, :find, fn _, _ -> [movable] end)
+    stub(Automedia.Signal.MockMovable, :find, fn _, _ -> {:ok, [movable]} end)
     stub(Automedia.Signal.MockTimestamp, :optionally_read, fn _ -> {:ok, 12345} end)
     stub(Automedia.Signal.MockTimestamp, :optionally_write, fn _, _ -> {:ok} end)
 
