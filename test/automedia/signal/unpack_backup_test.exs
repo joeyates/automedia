@@ -5,7 +5,8 @@ defmodule Automedia.Signal.UnpackBackupTest do
   setup :verify_on_exit!
 
   setup context do
-    call_result = Map.get(context, :call_result, {"", 0})
+    backups_result = Map.get(context, :backups_result, ["earlier", "later"])
+    system_call_result = Map.get(context, :system_call_result, {"", 0})
     destination_dir_exists = Map.get(context, :destination_dir_exists, false)
     dry_run = Map.get(context, :dry_run, false)
     password_file_exists = Map.get(context, :password_file_exists, true)
@@ -14,8 +15,8 @@ defmodule Automedia.Signal.UnpackBackupTest do
     stub(MockFile, :mkdir_p!, fn "/destination" -> :ok end)
     stub(MockFile, :regular?, fn "/password/file" -> password_file_exists end)
     stub(MockFile, :rm_rf!, fn "/destination" -> :ok end)
-    stub(MockSystem, :cmd, fn _, _, _ -> call_result end)
-    stub(Automedia.Signal.MockBackups, :from, fn _ -> {:ok, ["earlier", "later"]} end)
+    stub(MockSystem, :cmd, fn _, _, _ -> system_call_result end)
+    stub(Automedia.Signal.MockBackups, :from, fn _ -> {:ok, backups_result} end)
 
     options = %Automedia.Signal.UnpackBackup{
       destination: "/destination",
@@ -91,12 +92,17 @@ defmodule Automedia.Signal.UnpackBackupTest do
   end
 
   @tag password_file_exists: false
-  test "when the password file is missing, it exist with an error", context do
+  test "when the password file is missing, it exits with an error", context do
     assert catch_exit(Automedia.Signal.UnpackBackup.run(context.options)) == 1
   end
 
-  @tag call_result: {"Uh-oh!", 1}
-  test "when the system call fails, it exist with an error", context do
+  @tag backups_result: []
+  test "when no backups are found, it exits with an error", context do
+    assert catch_exit(Automedia.Signal.UnpackBackup.run(context.options)) == 1
+  end
+
+  @tag system_call_result: {"Uh-oh!", 1}
+  test "when the system call fails, it exits with an error", context do
     assert catch_exit(Automedia.Signal.UnpackBackup.run(context.options)) == 1
   end
 end

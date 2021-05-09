@@ -25,6 +25,9 @@ defmodule Automedia.OptionParser do
     iex> Automedia.OptionParser.run(["first", "second"], remaining: 2..3)
     {:ok, %{}, ["first", "second"]}
 
+    iex> Automedia.OptionParser.run(["first"], remaining: 2)
+    {:error, "Supply 2 non-switch arguments"}
+
     iex> Automedia.OptionParser.run(["first"], remaining: 2..3)
     {:error, "Supply 2..3 non-switch arguments"}
   """
