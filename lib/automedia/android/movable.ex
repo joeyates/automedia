@@ -10,6 +10,7 @@ defmodule Automedia.Android.Movable do
 
   @file_module Application.get_env(:automedia, :file_module, File)
 
+  @callback find(String.t()) :: [Automedia.Movable.t()]
   def find(path) do
     Logger.debug "Scanning '#{path}' for Android files"
 
