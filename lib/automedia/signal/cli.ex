@@ -3,8 +3,18 @@ defmodule Automedia.Signal.CLI do
 
   require Logger
 
-  alias Automedia.Signal.UnpackBackup
+  alias Automedia.Signal.Clean
   alias Automedia.Signal.Move
+  alias Automedia.Signal.UnpackBackup
+
+  @clean_switches [
+    dry_run: :boolean,
+    quiet: :boolean,
+    source: :string,
+    verbose: :count
+  ]
+
+  @clean_required ~w(source)a
 
   @move_switches [
     destination: :string,
@@ -28,10 +38,25 @@ defmodule Automedia.Signal.CLI do
 
   @unpack_required ~w(destination password_file source)a
 
+  @signal_clean Application.get_env(:automedia, :signal_clean, Clean)
   @signal_move Application.get_env(:automedia, :signal_move, Move)
   @signal_unpack_backup Application.get_env(:automedia, :signal_unpack_backup, UnpackBackup)
 
   @callback run([String.t()]) :: {:ok}
+  def run(["clean" | args]) do
+    case Automedia.OptionParser.run(
+          args,
+          switches: @clean_switches,
+          required: @clean_required,
+          struct: Clean
+        ) do
+      {:ok, options, []} ->
+        {:ok} = @signal_clean.run(options)
+      {:error, message} ->
+        Logger.error message
+        exit(1)
+    end
+  end
   def run(["unpack" | args]) do
     case Automedia.OptionParser.run(
           args,

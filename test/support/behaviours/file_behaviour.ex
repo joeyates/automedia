@@ -5,6 +5,7 @@ defmodule FileBehaviour do
   @callback read!(Path.t()) :: String.t()
   @callback regular?(Path.t()) :: boolean()
   @callback rename!(Path.t(), Path.t()) :: :ok
+  @callback rm!(Path.t()) :: :ok
   @callback rm_rf!(Path.t()) :: :ok
   @callback write!(Path.t(), String.t()) :: :ok
 end
