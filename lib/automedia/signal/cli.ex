@@ -28,20 +28,19 @@ defmodule Automedia.Signal.CLI do
 
   @unpack_required ~w(destination password_file source)a
 
-  @signal_move Application.get_env(:automedia, :signal_move, Automedia.Signal.Move)
-  @signal_unpack_backup Application.get_env(:automedia, :signal_unpack_backup, Automedia.Signal.UnpackBackup)
+  @signal_move Application.get_env(:automedia, :signal_move, Move)
+  @signal_unpack_backup Application.get_env(:automedia, :signal_unpack_backup, UnpackBackup)
 
   @callback run([String.t()]) :: {:ok}
   def run(["unpack" | args]) do
     case Automedia.OptionParser.run(
           args,
           switches: @unpack_switches,
-          required: @unpack_required
+          required: @unpack_required,
+          struct: UnpackBackup
         ) do
       {:ok, options, []} ->
-        {:ok} =
-          struct!(UnpackBackup, options)
-          |> @signal_unpack_backup.run()
+        {:ok} = @signal_unpack_backup.run(options)
       {:error, message} ->
         Logger.error message
         exit(1)
@@ -51,12 +50,11 @@ defmodule Automedia.Signal.CLI do
     case Automedia.OptionParser.run(
           args,
           switches: @move_switches,
-          required: @move_required
+          required: @move_required,
+          struct: Move
         ) do
       {:ok, options, []} ->
-        {:ok} =
-          struct!(Move, options)
-          |> @signal_move.run()
+        {:ok} = @signal_move.run(options)
       {:error, message} ->
         Logger.error message
         exit(1)
