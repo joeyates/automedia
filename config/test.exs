@@ -2,7 +2,6 @@ import Config
 
 config :automedia, file_module: MockFile
 config :automedia, system_module: MockSystem
-config :automedia, automedia: MockAutomedia
 config :automedia, destination_chooser: Automedia.MockDestinationChooser
 config :automedia, move: Automedia.MockMove
 config :automedia, android_cli: Automedia.Android.MockCLI
