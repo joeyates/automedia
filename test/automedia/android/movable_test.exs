@@ -90,4 +90,20 @@ defmodule Automedia.Android.MovableTest do
       ]
     }
   end
+
+  @tag ls_result: ["foo", "20210522_120107.jpg"]
+  test "it returns Samsung image files" do
+    assert Automedia.Android.Movable.find("/path") == {
+      :ok,
+      [
+        %Automedia.Movable{
+          date: ~D[2021-05-22],
+          destination: nil,
+          extension: "jpg",
+          source: "/path/20210522_120107.jpg",
+          time: ~T[12:01:07]
+        }
+      ]
+    }
+  end
 end

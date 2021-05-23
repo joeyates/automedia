@@ -5,7 +5,7 @@ defmodule Automedia.Android.Movable do
 
   import Automedia.ConversionHelpers, only: [i: 1]
 
-  @with_date_and_second ~r[\/(?:IMG|VID)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})\.(jpe?g|mp4)]i
+  @with_date_and_second ~r[\/(?:IMG_|VID_|)(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})\.(jpe?g|mp4)]i
   @with_date_and_millisecond ~r[\/(?:PXL)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})(\d{3})\.((?:MP\.)?jpe?g|mp4)]i
 
   @file_module Application.get_env(:automedia, :file_module, File)
