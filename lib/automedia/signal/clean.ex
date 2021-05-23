@@ -1,6 +1,8 @@
 defmodule Automedia.Signal.Clean do
   @moduledoc false
 
+  require Logger
+
   @enforce_keys ~w(source)a
   defstruct ~w(dry_run quiet source verbose)a
 
@@ -10,18 +12,24 @@ defmodule Automedia.Signal.Clean do
   @callback run(__MODULE__) :: {:ok}
   def run(%__MODULE__{} = options) do
     {:ok, backups} = all_but_latest_backup(options)
-    Enum.each(backups, &(@file_module.rm!(&1)))
+    Enum.each(backups, fn backup ->
+      Logger.info "Deleting '#{backup}'"
+      if !options.dry_run do
+        @file_module.rm!(backup)
+      end
+    end)
+
     {:ok}
   end
 
   defp all_but_latest_backup(options) do
     case @signal_backups.from(options.source) do
-      [] ->
+      {:ok, []} ->
         {:ok, []}
-      [_latest] ->
+      {:ok, [_latest]} ->
         {:ok, []}
-      backups ->
-        [_latest | older] = backups |> Enum.reverse()
+      {:ok, backups} ->
+        [_latest | older] = Enum.reverse(backups)
         {:ok, older}
     end
   end

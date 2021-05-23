@@ -67,7 +67,7 @@ defmodule Automedia.Signal.UnpackBackup do
           ],
           stderr_to_stdout: true
         ) do
-      {"", 0} ->
+      {_output, 0} ->
         {:ok}
       {error, _code} ->
         {:error, "Failed to run signal-backup-decode. Error: #{error}"}

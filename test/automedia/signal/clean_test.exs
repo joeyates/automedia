@@ -7,7 +7,7 @@ defmodule Automedia.Signal.CleanTest do
   setup :verify_on_exit!
 
   setup do
-    stub(Automedia.Signal.MockBackups, :from, fn _ -> ["/backup/1", "/backup/2"] end)
+    stub(Automedia.Signal.MockBackups, :from, fn _ -> {:ok, ["/backup/1", "/backup/2"]} end)
 
     :ok
   end
