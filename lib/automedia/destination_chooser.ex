@@ -65,42 +65,42 @@ defmodule Automedia.DestinationChooser do
       }
     ]
 
-  When the time is missing, it does not set the destination:
+  When the time is missing, it uses the source file name:
 
     iex> Automedia.DestinationChooser.run([
     ...>   %Automedia.Movable{
     ...>     date: ~D[2020-01-01],
     ...>     extension: "ext",
-    ...>     source: nil,
+    ...>     source: "/source/path/filename.ext",
     ...>     time: nil
     ...>   }
     ...> ], "/base")
     [
       %Automedia.Movable{
         date: ~D[2020-01-01],
-        destination: nil,
+        destination: "/base/2020s/2020/202001/20200101/filename.ext",
         extension: "ext",
-        source: nil,
+        source: "/source/path/filename.ext",
         time: nil
       }
     ]
 
-  When the extension is missing, it does not set the destination:
+  When the extension is missing, it uses the source file name:
 
     iex> Automedia.DestinationChooser.run([
     ...>   %Automedia.Movable{
     ...>     date: ~D[2020-01-01],
     ...>     extension: nil,
-    ...>     source: nil,
+    ...>     source: "/source/path/filename.ext",
     ...>     time: ~T[15:01:01]
     ...>   }
     ...> ], "/base")
     [
       %Automedia.Movable{
         date: ~D[2020-01-01],
-        destination: nil,
+        destination: "/base/2020s/2020/202001/20200101/filename.ext",
         extension: nil,
-        source: nil,
+        source: "/source/path/filename.ext",
         time: ~T[15:01:01]
       }
     ]
@@ -111,8 +111,32 @@ defmodule Automedia.DestinationChooser do
 
   @spec choose(Automedia.Movable.t(), binary) :: Automedia.Movable.t()
   defp choose(%Automedia.Movable{date: nil} = movable, _destination_root), do: movable
-  defp choose(%Automedia.Movable{time: nil} = movable, _destination_root), do: movable
-  defp choose(%Automedia.Movable{extension: nil} = movable, _destination_root), do: movable
+  defp choose(
+    %Automedia.Movable{
+      date: date,
+      source: source,
+      time: nil
+    } = movable,
+    destination_root
+  ) do
+    directory = date_directory(date, destination_root)
+    filename = Path.basename(source)
+    destination = Path.join(directory, filename)
+    struct(movable, destination: destination)
+  end
+  defp choose(
+    %Automedia.Movable{
+      date: date,
+      extension: nil,
+      source: source
+    } = movable,
+    destination_root
+  ) do
+    directory = date_directory(date, destination_root)
+    filename = Path.basename(source)
+    destination = Path.join(directory, filename)
+    struct(movable, destination: destination)
+  end
   defp choose(
     %Automedia.Movable{
       date: date,
@@ -121,20 +145,24 @@ defmodule Automedia.DestinationChooser do
     } = movable,
     destination_root
   ) do
-    year_part = :io_lib.format("~4..0B", [date.year]) |> IO.chardata_to_string()
-    month_part = :io_lib.format("~s~2..0B", [year_part, date.month]) |> IO.chardata_to_string()
-    day_part = :io_lib.format("~s~2..0B", [month_part, date.day]) |> IO.chardata_to_string()
+    directory = date_directory(date, destination_root)
     name = time_name(time)
     filename = "#{name}.#{extension}"
-    destination = Path.join([
+    destination = Path.join(directory, filename)
+    struct(movable, destination: destination)
+  end
+
+  defp date_directory(%Date{year: year, month: month, day: day}, destination_root) do
+    year_part = :io_lib.format("~4..0B", [year]) |> IO.chardata_to_string()
+    month_part = :io_lib.format("~s~2..0B", [year_part, month]) |> IO.chardata_to_string()
+    day_part = :io_lib.format("~s~2..0B", [month_part, day]) |> IO.chardata_to_string()
+    Path.join([
       destination_root,
-      decade(date.year),
+      decade(year),
       year_part,
       month_part,
-      day_part,
-      filename
+      day_part
     ])
-    struct(movable, destination: destination)
   end
 
   defp time_name(%Time{hour: h, minute: m, second: s, microsecond: {0, _precision}}) do
