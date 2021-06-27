@@ -14,5 +14,7 @@ config :automedia, signal_movable: Automedia.Signal.MockMovable
 config :automedia, signal_move: Automedia.Signal.MockMove
 config :automedia, signal_timestamp: Automedia.Signal.MockTimestamp
 config :automedia, signal_unpack_backup: Automedia.Signal.MockUnpackBackup
+config :automedia, whatsapp_cli: Automedia.WhatsApp.MockCLI
+config :automedia, whatsapp_move: Automedia.WhatsApp.MockMove
 
 config :logger, backends: []
