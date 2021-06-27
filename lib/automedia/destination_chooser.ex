@@ -104,23 +104,44 @@ defmodule Automedia.DestinationChooser do
         time: ~T[15:01:01]
       }
     ]
+
+  When a prefix is supplied, it is added before the file name:
+
+    iex> Automedia.DestinationChooser.run([
+    ...>   %Automedia.Movable{
+    ...>     date: ~D[2020-01-01],
+    ...>     extension: "ext",
+    ...>     source: nil,
+    ...>     time: ~T[15:01:01]
+    ...>   }
+    ...> ], "/base", "prefix")
+    [
+      %Automedia.Movable{
+        date: ~D[2020-01-01],
+        destination: "/base/2020s/2020/202001/20200101/prefix-150101.ext",
+        extension: "ext",
+        source: nil,
+        time: ~T[15:01:01]
+      }
+    ]
   """
-  def run(movable_files, destination_root) do
-    Enum.map(movable_files, &(choose(&1, destination_root)))
+  def run(movable_files, destination_root, prefix \\ nil) do
+    Enum.map(movable_files, &(choose(&1, destination_root, prefix)))
   end
 
-  @spec choose(Automedia.Movable.t(), binary) :: Automedia.Movable.t()
-  defp choose(%Automedia.Movable{date: nil} = movable, _destination_root), do: movable
+  @spec choose(Automedia.Movable.t(), Pathname.t(), String.t() | nil) :: Automedia.Movable.t()
+  defp choose(%Automedia.Movable{date: nil} = movable, _destination_root, _prefix), do: movable
   defp choose(
     %Automedia.Movable{
       date: date,
       source: source,
       time: nil
     } = movable,
-    destination_root
+    destination_root,
+    prefix
   ) do
     directory = date_directory(date, destination_root)
-    filename = Path.basename(source)
+    filename = with_prefix(Path.basename(source), prefix)
     destination = Path.join(directory, filename)
     struct(movable, destination: destination)
   end
@@ -130,10 +151,11 @@ defmodule Automedia.DestinationChooser do
       extension: nil,
       source: source
     } = movable,
-    destination_root
+    destination_root,
+    prefix
   ) do
     directory = date_directory(date, destination_root)
-    filename = Path.basename(source)
+    filename = with_prefix(Path.basename(source), prefix)
     destination = Path.join(directory, filename)
     struct(movable, destination: destination)
   end
@@ -143,11 +165,12 @@ defmodule Automedia.DestinationChooser do
       time: time,
       extension: extension
     } = movable,
-    destination_root
+    destination_root,
+    prefix
   ) do
     directory = date_directory(date, destination_root)
     name = time_name(time)
-    filename = "#{name}.#{extension}"
+    filename = with_prefix("#{name}.#{extension}", prefix)
     destination = Path.join(directory, filename)
     struct(movable, destination: destination)
   end
@@ -164,6 +187,9 @@ defmodule Automedia.DestinationChooser do
       day_part
     ])
   end
+
+  defp with_prefix(filename, nil), do: filename
+  defp with_prefix(filename, prefix), do: "#{prefix}-#{filename}"
 
   defp time_name(%Time{hour: h, minute: m, second: s, microsecond: {0, _precision}}) do
     :io_lib.format("~2..0B~2..0B~2..0B", [h, m, s])
