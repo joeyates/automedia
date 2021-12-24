@@ -39,7 +39,7 @@ defmodule Automedia.WhatsApp.Movable do
     )
     if match do
       Logger.debug "'#{pathname}' is an WhatsApp file"
-      [year, month, day, counter, extension] = match
+      [year, month, day, _counter, extension] = match
       case Date.new(i(year), i(month), i(day)) do
         {:ok, date} ->
           %Automedia.Movable{
