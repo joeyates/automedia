@@ -29,13 +29,14 @@ defmodule Automedia.MixProject do
   defp elixirc_paths(_env), do: ["lib"]
 
   defp extra_applications(:test), do: [:logger, :mox]
-  defp extra_applications(_env), do: [:logger]
+  defp extra_applications(_env), do: [:logger, :postgrex]
 
   defp deps do
     [
       {:credo, ">= 0.0.0", only: [:dev, :test], runtime: false},
       {:excoveralls, ">= 0.0.0", only: :test},
-      {:mox, ">= 0.0.0", only: :test, runtime: false}
+      {:mox, ">= 0.0.0", only: :test, runtime: false},
+      {:postgrex, ">= 0.0.0"}
     ]
   end
 end
