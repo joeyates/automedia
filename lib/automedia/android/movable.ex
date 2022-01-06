@@ -7,6 +7,7 @@ defmodule Automedia.Android.Movable do
 
   @with_date_and_second ~r[\/(?:IMG_|VID_|)(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})\.(jpe?g|mp4)]i
   @with_date_and_millisecond ~r[\/(?:PXL)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})(\d{3})\.((?:MP\.)?jpe?g|mp4)]i
+  @with_date_second_and_milisecond ~r[\/(?:IMG_|VID_|)(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})_(\d{3})\.(jpe?g|mp4)]i
 
   @file_module Application.get_env(:automedia, :file_module, File)
 
@@ -29,7 +30,8 @@ defmodule Automedia.Android.Movable do
 
   defp match(pathname) do
     match_with_date_and_second(pathname) ||
-      match_with_date_and_millisecond(pathname)
+      match_with_date_and_millisecond(pathname) ||
+      match_with_date_second_and_millisecond(pathname)
   end
 
   @spec match_with_date_and_second(Path.t()) :: Automedia.Movable.t() | nil
@@ -63,6 +65,33 @@ defmodule Automedia.Android.Movable do
   defp match_with_date_and_millisecond(pathname) do
     match = Regex.run(
       @with_date_and_millisecond,
+      pathname,
+      capture: :all_but_first
+    )
+    if match do
+      Logger.debug "'#{pathname}' is an Android file"
+      [year, month, day, hour, minute, second, millisecond, extension] = match
+      with {:ok, date} <- Date.new(i(year), i(month), i(day)),
+           {:ok, time} <- Time.new(i(hour), i(minute), i(second), i(millisecond) * 1000) do
+        %Automedia.Movable{
+          source: pathname,
+          date: date,
+          time: time,
+          extension: extension
+        }
+      else
+        {:error, :invalid_date} ->
+          nil
+        {:error, :invalid_time} ->
+          nil
+      end
+    end
+  end
+
+  @spec match_with_date_second_and_millisecond(Path.t()) :: Automedia.Movable.t() | nil
+  defp match_with_date_second_and_millisecond(pathname) do
+    match = Regex.run(
+      @with_date_second_and_milisecond,
       pathname,
       capture: :all_but_first
     )
