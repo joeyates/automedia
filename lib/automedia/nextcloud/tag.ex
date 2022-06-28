@@ -12,6 +12,7 @@ defmodule Automedia.Nextcloud.Tag do
     :password,
     :tag,
     :username,
+    dry_run: false,
     path_prefix: "/"
   ]
 

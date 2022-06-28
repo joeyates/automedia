@@ -6,14 +6,15 @@ defmodule Automedia.Nextcloud.CLI do
   alias Automedia.Nextcloud.Tag
 
   @tag_switches [
-    tag: :string,
-    host: :string,
     database: :string,
-    username: :string,
-    password: :string
     database_prefix: :string,
+    dry_run: :boolean,
+    host: :string,
     match: :string,
-    path_prefix: :string
+    password: :string,
+    path_prefix: :string,
+    tag: :string,
+    username: :string
   ]
 
   @tag_required ~w(database_prefix tag host database username password)a
