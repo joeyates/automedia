@@ -37,8 +37,9 @@ defmodule Automedia.OptionParser do
          {:ok} <- check_required(named, opts),
          {:ok} <- check_remaining(remaining, opts),
          {:ok} <- setup_logger(named),
-         {:ok, named} <- optionally_build_struct(named, opts) do
-      {:ok, named, remaining}
+         {:ok, filtered} <- remove_logging(named),
+         {:ok, filtered} <- optionally_build_struct(filtered, opts) do
+      {:ok, filtered, remaining}
     else
       {:error, message} ->
         {:error, message}
@@ -48,8 +49,8 @@ defmodule Automedia.OptionParser do
   defp options_map(options), do: {:ok, Enum.into(options, %{})}
 
   defp parse(args, opts) do
-    aliases = opts[:aliases] || []
-    switches = opts[:switches] || []
+    aliases = (opts[:aliases] || []) ++ [q: :quiet, v: :verbose]
+    switches = (opts[:switches] || []) ++ [quiet: :boolean, verbose: :count]
 
     case OptionParser.parse(args, aliases: aliases, strict: switches) do
       {named_list, remaining, []} ->
@@ -106,5 +107,14 @@ defmodule Automedia.OptionParser do
     Automedia.Logger.put_level(level)
 
     {:ok}
+  end
+
+  defp remove_logging(named) do
+    {
+      :ok,
+      named
+      |> Map.delete(:quiet)
+      |> Map.delete(:verbose)
+    }
   end
 end
