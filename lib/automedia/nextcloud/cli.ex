@@ -6,15 +6,17 @@ defmodule Automedia.Nextcloud.CLI do
   alias Automedia.Nextcloud.Tag
 
   @tag_switches [
-    prefix: :string,
     tag: :string,
     host: :string,
     database: :string,
     username: :string,
     password: :string
+    database_prefix: :string,
+    match: :string,
+    path_prefix: :string
   ]
 
-  @tag_required ~w(prefix tag host database username password)a
+  @tag_required ~w(database_prefix tag host database username password)a
 
   @callback run([String.t()]) :: {:ok}
   def run(["tag" | args]) do
