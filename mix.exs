@@ -33,6 +33,7 @@ defmodule Automedia.MixProject do
 
   defp deps do
     [
+      {:bakeware, runtime: false},
       {:credo, ">= 0.0.0", only: [:dev, :test], runtime: false},
       {:excoveralls, ">= 0.0.0", only: :test},
       {:mox, ">= 0.0.0", only: :test, runtime: false},
