@@ -8,6 +8,7 @@ defmodule Automedia.Nextcloud.CLI do
   @tag_switches [
     database: :string,
     database_prefix: :string,
+    case_sensitive: :boolean,
     dry_run: :boolean,
     host: :string,
     match: :string,

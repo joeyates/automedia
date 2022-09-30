@@ -13,6 +13,7 @@ defmodule Automedia.Nextcloud.Tag do
     :tag,
     :username,
     dry_run: false,
+    case_sensitive: false,
     path_prefix: "/"
   ]
 
@@ -33,13 +34,14 @@ defmodule Automedia.Nextcloud.Tag do
       create_tag(pid, options.tag, options)
     end
     match = "%#{options.match || options.tag}%"
+    match_operator = if options.case_sensitive, do: "LIKE", else: "ILIKE"
     path_match = "files#{options.path_prefix}%"
 
     query = """
     select fileid, path
     from #{files_table}
     where
-      name ilike $1
+      name #{match_operator} $1
       AND path like $2
       AND mimetype = 12
     """
