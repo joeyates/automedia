@@ -19,7 +19,17 @@ defmodule Automedia.Android.CLI do
   @android_move Application.get_env(:automedia, :android_move, Move)
 
   @callback run([String.t()]) :: {:ok}
-  def run(args) do
+  def run(["help" | ["move" | _args]]) do
+    IO.puts "Usage:"
+    IO.puts "  automedia android move [OPTIONS]"
+    IO.puts Automedia.OptionParser.help(@switches)
+    IO.puts "Move Android files to media directories based on date in filename"
+  end
+  def run(["help" | _args]) do
+    IO.puts "Commands:"
+    IO.puts "  automedia android move [OPTIONS]"
+  end
+  def run(["move" | args]) do
     case Automedia.OptionParser.run(
           args,
           switches: @switches
@@ -28,9 +38,13 @@ defmodule Automedia.Android.CLI do
         {:ok} =
           struct!(Move, options)
           |> @android_move.run()
+        0
       {:error, message} ->
         Logger.error message
-        exit(1)
+        1
     end
+  end
+  def run(args) do
+    IO.puts("automedia android, expected 'move' command, got #{inspect(args)}")
   end
 end

@@ -46,6 +46,16 @@ defmodule Automedia.OptionParser do
     end
   end
 
+  def help(switches) do
+    items =
+      switches
+      |> Enum.map(fn {name, _options} ->
+        "--#{name}"
+      end)
+      |> Enum.join("\n")
+    "Options:\n#{items}"
+  end
+
   defp options_map(options), do: {:ok, Enum.into(options, %{})}
 
   defp parse(args, opts) do
