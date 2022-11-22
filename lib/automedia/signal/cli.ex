@@ -8,35 +8,29 @@ defmodule Automedia.Signal.CLI do
   alias Automedia.Signal.UnpackBackup
 
   @clean_switches [
-    dry_run: :boolean,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
+    dry_run: %{type: :boolean},
+    quiet: %{type: :boolean},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
   ]
-
-  @clean_required ~w(source)a
 
   @move_switches [
-    destination: :string,
-    dry_run: :boolean,
-    start_timestamp_file: :string,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
+    destination: %{type: :string, required: true},
+    dry_run: %{type: :boolean},
+    start_timestamp_file: %{type: :string},
+    quiet: %{type: :boolean},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
   ]
-
-  @move_required ~w(destination source)a
 
   @unpack_switches [
-    destination: :string,
-    dry_run: :boolean,
-    password_file: :string,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
+    destination: %{type: :string, required: true},
+    dry_run: %{type: :boolean},
+    password_file: %{type: :string, required: true},
+    quiet: %{type: :boolean},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
   ]
-
-  @unpack_required ~w(destination password_file source)a
 
   @signal_clean Application.get_env(:automedia, :signal_clean, Clean)
   @signal_move Application.get_env(:automedia, :signal_move, Move)
@@ -47,7 +41,6 @@ defmodule Automedia.Signal.CLI do
     case Automedia.OptionParser.run(
           args,
           switches: @clean_switches,
-          required: @clean_required,
           struct: Clean
         ) do
       {:ok, options, []} ->
@@ -61,7 +54,6 @@ defmodule Automedia.Signal.CLI do
     case Automedia.OptionParser.run(
           args,
           switches: @unpack_switches,
-          required: @unpack_required,
           struct: UnpackBackup
         ) do
       {:ok, options, []} ->
@@ -75,7 +67,6 @@ defmodule Automedia.Signal.CLI do
     case Automedia.OptionParser.run(
           args,
           switches: @move_switches,
-          required: @move_required,
           struct: Move
         ) do
       {:ok, options, []} ->

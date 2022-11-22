@@ -7,13 +7,13 @@ defmodule Automedia.OptionParser do
   Parses command arguments, returns an error if
   required arguments are not supplied and sets the logging level
 
-    iex> Automedia.OptionParser.run(["--foo", "hi"], switches: [foo: :string])
+    iex> Automedia.OptionParser.run(["--foo", "hi"], switches: %{foo: %{type: :string}}])
     {:ok, %{foo: "hi"}, []}
 
-    iex> Automedia.OptionParser.run(["-f", "hi"], switches: [foo: :string], aliases: [f: :foo])
+    iex> Automedia.OptionParser.run(["-f", "hi"], switches: [foo: %{type: :string}], aliases: [f: :foo])
     {:ok, %{foo: "hi"}, []}
 
-    iex> Automedia.OptionParser.run(["--bar", "hi"], switches: [foo: :string])
+    iex> Automedia.OptionParser.run(["--bar", "hi"], switches: [foo: %{type: :string}])
     {:error, "Unexpected parameters supplied: [\"--bar\"]"}
 
     iex> Automedia.OptionParser.run(["non-switch"], remaining: 1)
@@ -50,9 +50,10 @@ defmodule Automedia.OptionParser do
 
   defp parse(args, opts) do
     aliases = (opts[:aliases] || []) ++ [q: :quiet, v: :verbose]
-    switches = (opts[:switches] || []) ++ [quiet: :boolean, verbose: :count]
+    switches = Map.merge((opts[:switches] || %{}), %{quiet: %{type: :boolean}, verbose: %{type: :count}})
+    switches_keyword = switches_keyword(switches)
 
-    case OptionParser.parse(args, aliases: aliases, strict: switches) do
+    case OptionParser.parse(args, aliases: aliases, strict: switches_keyword) do
       {named_list, remaining, []} ->
         named = Enum.into(named_list, %{})
         {:ok, named, remaining}
@@ -60,6 +61,10 @@ defmodule Automedia.OptionParser do
         keys = Enum.map(invalid, fn {key, _value} -> key end)
         {:error, "Unexpected parameters supplied: #{inspect(keys)}"}
     end
+  end
+
+  defp switches_keyword(switches) do
+    Enum.map(switches, fn {name, %{type: type}} -> {name, type} end)
   end
 
   defp check_required(named, opts) do

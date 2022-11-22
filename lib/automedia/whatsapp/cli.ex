@@ -6,15 +6,13 @@ defmodule Automedia.WhatsApp.CLI do
   alias Automedia.WhatsApp.Move
 
   @move_switches [
-    destination: :string,
-    dry_run: :boolean,
-    prefix: :string,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
+    destination: %{type: :string, required: true},
+    dry_run: %{type: :boolean},
+    prefix: %{type: :string},
+    quiet: %{type: :boolean, required: true},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
   ]
-
-  @move_required ~w(destination prefix source)a
 
   @whatsapp_move Application.get_env(:automedia, :whatsapp_move, Move)
 
@@ -23,7 +21,6 @@ defmodule Automedia.WhatsApp.CLI do
     case Automedia.OptionParser.run(
           args,
           switches: @move_switches,
-          required: @move_required,
           struct: Move
         ) do
       {:ok, options, []} ->

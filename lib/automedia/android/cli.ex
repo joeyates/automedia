@@ -8,15 +8,13 @@ defmodule Automedia.Android.CLI do
 
   alias Automedia.Android.Move
 
-  @switches [
-    destination: :string,
-    dry_run: :boolean,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
-  ]
-
-  @required [:source, :destination]
+  @switches %{
+    destination: %{type: :string, required: true},
+    dry_run: %{type: :boolean},
+    quiet: %{type: :boolean},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
+  }
 
   @android_move Application.get_env(:automedia, :android_move, Move)
 
@@ -24,8 +22,7 @@ defmodule Automedia.Android.CLI do
   def run(args) do
     case Automedia.OptionParser.run(
           args,
-          switches: @switches,
-          required: @required
+          switches: @switches
         ) do
       {:ok, options, []} ->
         {:ok} =
