@@ -78,9 +78,16 @@ defmodule Automedia.OptionParser do
   end
 
   defp check_required(named, opts) do
-    required = opts[:required] || []
+    missing =
+      opts.switches
+      |> Enum.map(fn
+          {name, %{required: true}} ->
+            if !Map.has_key?(named, name), do: name
+          _ ->
+            nil
+        end)
+      |> Enum.filter(&(&1))
 
-    missing = Enum.filter(required, &(!Map.has_key?(named, &1)))
     if length(missing) == 0 do
       {:ok}
     else

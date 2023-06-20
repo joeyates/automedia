@@ -15,13 +15,13 @@ EXIF metadata within the file.
 # Usage
 
 ```sh
-$ mix automedia.run [android|signal] [ARGS]
+$ automedia [android|fit|nextcloud|signal|whats_app] [ARGS]
 ```
 
 # Android
 
 ```sh
-$ mix automedia.run android --source [PATH] --destination [PATH]
+$ automedia android --source [PATH] --destination [PATH]
   [--dry-run] [--verbose] [--quiet]
 ```
 
@@ -41,7 +41,7 @@ $ cargo install signal-backup-decode
 Unpack:
 
 ```sh
-$ mix automedia.run signal unpack --source [FILE] --destination [PATH] \
+$ automedia signal unpack --source [FILE] --destination [PATH] \
   --password-file [FILE] [--dry-run] [--verbose] [--quiet]
 ```
 
@@ -53,7 +53,7 @@ $ mix automedia.run signal unpack --source [FILE] --destination [PATH] \
 ## Classify attachments
 
 ```sh
-$ mix automedia.run signal --source [PATH] --destination [PATH]
+$ automedia signal --source [PATH] --destination [PATH]
   [--dry-run] [--verbose] [--quiet]
   [--start-timestamp-file PATH]
 ```
@@ -65,6 +65,18 @@ $ mix automedia.run signal --source [PATH] --destination [PATH]
   ignored. This is useful if you manually post-process the imported
   files, renaming or deleting stuff, and don't want to have to
   redo the work.
+
+## WhatsApp
+
+```sh
+automedia whats_app move
+```
+
+# Build
+
+```sh
+mix release
+```
 
 # Roadmap
 
