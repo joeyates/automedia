@@ -15,7 +15,7 @@ defmodule Automedia.Fit.CLI do
     verbose: %{type: :count}
   ]
 
-  @fit_convert Application.get_env(:automedia, :fit_convert, Convert)
+  @fit_convert Application.compile_env(:automedia, :fit_convert, Convert)
 
   @callback run([String.t()]) :: {:ok}
   def run(args) do

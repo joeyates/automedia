@@ -5,7 +5,7 @@ defmodule Automedia.Move do
 
   require Automedia.Movable
 
-  @file_module Application.get_env(:automedia, :file_module, File)
+  @file_module Application.compile_env(:automedia, :file_module, File)
 
   @callback move(Automedia.Movable.t(), keyword()) :: {:ok}
   def move(%Automedia.Movable{source: source, destination: destination}, options) do

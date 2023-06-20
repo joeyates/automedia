@@ -16,7 +16,7 @@ defmodule Automedia.Android.CLI do
     verbose: %{type: :count}
   }
 
-  @android_move Application.get_env(:automedia, :android_move, Move)
+  @android_move Application.compile_env(:automedia, :android_move, Move)
 
   @callback run([String.t()]) :: {:ok}
   def run(["help" | ["move" | _args]]) do

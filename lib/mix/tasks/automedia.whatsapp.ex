@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Automedia.WhatsApp do
 
   use Mix.Task
 
-  @whatsapp_cli Application.get_env(:automedia, :whatsapp_cli, Automedia.WhatsApp.CLI)
+  @whatsapp_cli Application.compile_env(:automedia, :whatsapp_cli, Automedia.WhatsApp.CLI)
 
   @shortdoc "Moves WhatsApp files to media directories based on date in filename"
   @callback run([String.t()]) :: {:ok}

@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Automedia.Fit do
 
   use Mix.Task
 
-  @fit_cli Application.get_env(:automedia, :fit_cli, Automedia.Fit.CLI)
+  @fit_cli Application.compile_env(:automedia, :fit_cli, Automedia.Fit.CLI)
 
   @shortdoc "Converts .fit files to .gpx"
   @callback run([String.t()]) :: {:ok}

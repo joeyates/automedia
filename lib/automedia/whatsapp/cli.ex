@@ -14,7 +14,7 @@ defmodule Automedia.WhatsApp.CLI do
     verbose: %{type: :count}
   ]
 
-  @whatsapp_move Application.get_env(:automedia, :whatsapp_move, Move)
+  @whatsapp_move Application.compile_env(:automedia, :whatsapp_move, Move)
 
   @callback run([String.t()]) :: {:ok}
   def run(args) do

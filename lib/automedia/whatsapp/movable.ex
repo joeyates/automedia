@@ -7,7 +7,7 @@ defmodule Automedia.WhatsApp.Movable do
 
   @with_date_and_second ~r[\/(?:IMG-|VID-)(\d{4})(\d{2})(\d{2})-WA(\d{4})\.(jpe?g|mp4)]i
 
-  @file_module Application.get_env(:automedia, :file_module, File)
+  @file_module Application.compile_env(:automedia, :file_module, File)
 
   @callback find(String.t()) :: [Automedia.Movable.t()]
   def find(path) do

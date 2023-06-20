@@ -6,8 +6,8 @@ defmodule Automedia.Signal.Clean do
   @enforce_keys ~w(source)a
   defstruct ~w(dry_run quiet source verbose)a
 
-  @file_module Application.get_env(:automedia, :file_module, File)
-  @signal_backups Application.get_env(:automedia, :signal_backups, Automedia.Signal.Backups)
+  @file_module Application.compile_env(:automedia, :file_module, File)
+  @signal_backups Application.compile_env(:automedia, :signal_backups, Automedia.Signal.Backups)
 
   @callback run(__MODULE__) :: {:ok}
   def run(%__MODULE__{} = options) do

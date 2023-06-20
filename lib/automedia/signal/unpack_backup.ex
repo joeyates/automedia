@@ -4,9 +4,9 @@ defmodule Automedia.Signal.UnpackBackup do
 
   require Logger
 
-  @file_module Application.get_env(:automedia, :file_module, File)
-  @system_module Application.get_env(:automedia, :system_module, System)
-  @signal_backups Application.get_env(:automedia, :signal_backups, Automedia.Signal.Backups)
+  @file_module Application.compile_env(:automedia, :file_module, File)
+  @system_module Application.compile_env(:automedia, :system_module, System)
+  @signal_backups Application.compile_env(:automedia, :signal_backups, Automedia.Signal.Backups)
 
   @callback run(__MODULE__) :: {:ok}
   def run(%__MODULE__{} = options) do

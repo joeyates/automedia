@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Automedia.Signal do
 
   use Mix.Task
 
-  @signal_cli Application.get_env(:automedia, :signal_cli, Automedia.Signal.CLI)
+  @signal_cli Application.compile_env(:automedia, :signal_cli, Automedia.Signal.CLI)
 
   @doc false
   @shortdoc "Invokes Signal CLI"

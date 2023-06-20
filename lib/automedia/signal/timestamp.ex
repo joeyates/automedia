@@ -6,7 +6,7 @@ defmodule Automedia.Signal.Timestamp do
   require Logger
   import Automedia.ConversionHelpers, only: [i_or_nil: 1]
 
-  @file_module Application.get_env(:automedia, :file_module, File)
+  @file_module Application.compile_env(:automedia, :file_module, File)
 
   @doc """
   If present, reads the timestamp file, parses its contents (a UNIX timestamp)

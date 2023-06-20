@@ -32,9 +32,9 @@ defmodule Automedia.Signal.CLI do
     verbose: %{type: :count}
   ]
 
-  @signal_clean Application.get_env(:automedia, :signal_clean, Clean)
-  @signal_move Application.get_env(:automedia, :signal_move, Move)
-  @signal_unpack_backup Application.get_env(:automedia, :signal_unpack_backup, UnpackBackup)
+  @signal_clean Application.compile_env(:automedia, :signal_clean, Clean)
+  @signal_move Application.compile_env(:automedia, :signal_move, Move)
+  @signal_unpack_backup Application.compile_env(:automedia, :signal_unpack_backup, UnpackBackup)
 
   @callback run([String.t()]) :: {:ok}
   def run(["clean" | args]) do

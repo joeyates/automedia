@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Automedia.Android do
 
   use Mix.Task
 
-  @android_cli Application.get_env(:automedia, :android_cli, Automedia.Android.CLI)
+  @android_cli Application.compile_env(:automedia, :android_cli, Automedia.Android.CLI)
 
   @shortdoc "Moves Android files to media directories based on date in filename"
   @callback run([String.t()]) :: {:ok}
