@@ -4,8 +4,19 @@ defmodule Automedia.Fit.Convert do
   @enforce_keys ~w(bike_data_convertor_path destination source)a
   defstruct ~w(bike_data_convertor_path destination dry_run force quiet source verbose)a
 
+  @type t :: %__MODULE__{
+    bike_data_convertor_path: Path.t(),
+    destination: Path.t(),
+    dry_run: boolean(),
+    force: boolean(),
+    quiet: boolean(),
+    source: Path.t(),
+    verbose: integer()
+  }
+
   @with_fit_extension ~r[\.fit$]i
 
+  @callback run(__MODULE__.t()) :: {:ok | :error, String.t()}
   def run(%__MODULE__{} = options) do
     with {:ok, fit_files} <- list_fit_files(options.source),
          {:ok, pairs} <- build_destination_paths(fit_files, options.destination),

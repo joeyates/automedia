@@ -3,9 +3,10 @@ defmodule Automedia.Fit.CLI do
 
   require Logger
 
+  alias Automedia.OptionParser
   alias Automedia.Fit.Convert
 
-  @convert_switches [
+  @convert_switches %{
     bike_data_convertor_path: %{type: :string, required: true},
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
@@ -13,22 +14,37 @@ defmodule Automedia.Fit.CLI do
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
-  ]
+  }
 
   @fit_convert Application.compile_env(:automedia, :fit_convert, Convert)
 
   @callback run([String.t()]) :: {:ok}
-  def run(args) do
-    case Automedia.OptionParser.run(
-          args,
-          switches: @convert_switches,
-          struct: Convert
-        ) do
+  def run(["convert" | args]) do
+    case OptionParser.run(args, switches: @convert_switches) do
       {:ok, options, []} ->
-        {:ok} = @fit_convert.run(options)
+        {:ok} =
+          struct!(Convert, options)
+          |> @fit_convert.run()
+        0
       {:error, message} ->
-        Logger.error message
-        exit(1)
+        IO.puts :stderr, message
+        1
     end
+  end
+
+  def run(_args) do
+    usage(:stderr)
+    1
+  end
+
+  defp usage(device \\ :stdio) do
+    IO.puts device, "Commands:"
+    IO.puts device, "  automedia fit convert [OPTIONS]"
+  end
+
+  defp convert_usage(device \\ :stdio) do
+    IO.puts device, "Usage:"
+    IO.puts device, "  automedia fit convert [OPTIONS]"
+    IO.puts device, Automedia.OptionParser.help(@convert_switches)
   end
 end
