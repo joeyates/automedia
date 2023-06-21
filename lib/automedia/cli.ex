@@ -3,8 +3,8 @@ defmodule Automedia.CLI do
 
   @impl Bakeware.Script
   def main([]) do
-    IO.puts(:stderr, "Please supply a command")
-    list_top_level_commands()
+    IO.puts :stderr, "Please supply a command"
+    list_top_level_commands(:stderr)
     1
   end
 
@@ -14,13 +14,13 @@ defmodule Automedia.CLI do
     rescue e in
       ArgumentError ->
         message = "Automedia Error: #{e.message}"
-        IO.puts(:stderr, message)
+        IO.puts :stderr, message
         1
     end
   end
 
-  defp list_top_level_commands do
-    IO.puts("automedia android|fit|nextcloud|signal|whats_app ARGS")
+  defp list_top_level_commands(device \\ :stdio) do
+    IO.puts device, "automedia android|fit|nextcloud|signal|whats_app ARGS"
   end
 
   defp run("android", args) do
@@ -44,7 +44,7 @@ defmodule Automedia.CLI do
   end
 
   defp run(command, _args) do
-    IO.puts(:stderr, "Unknown command: '#{command}'")
+    IO.puts :stderr, "Unknown command: '#{command}'"
     1
   end
 end

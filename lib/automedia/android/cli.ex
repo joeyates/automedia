@@ -39,13 +39,13 @@ defmodule Automedia.Android.CLI do
           |> @android_move.run()
         0
       {:error, message} ->
-        IO.puts message
+        IO.puts :stderr, message
         1
     end
   end
 
   def run(args) do
-    IO.puts("automedia android, expected 'move' command, got #{inspect(args)}")
+    IO.puts :stderr, "automedia android, expected 'move' command, got #{inspect(args)}"
     1
   end
 end

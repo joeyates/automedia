@@ -18,15 +18,13 @@ defmodule Automedia.WhatsApp.CLI do
 
   @callback run([]) :: :integer
   def run([]) do
-    usage()
+    usage(:stderr)
     1
   end
 
   @callback run([String.t()]) :: :integer
   def run(["help" | ["move" | _args]]) do
-    IO.puts "Usage:"
-    IO.puts "  automedia whats_app move [OPTIONS]"
-    IO.puts Automedia.OptionParser.help(@move_switches)
+    move_usage()
     IO.puts "Move WhatsApp files to media directories based on date in filename"
     0
   end
@@ -44,18 +42,24 @@ defmodule Automedia.WhatsApp.CLI do
           |> @whatsapp_move.run()
         0
       {:error, message} ->
-        IO.puts message
+        IO.puts :stderr, message
         1
     end
   end
 
   def run(args) do
-    IO.puts("automedia whats_app, expected 'move' command, got #{inspect(args)}")
+    IO.puts :stderr, "automedia whats_app, expected 'move' command, got #{inspect(args)}"
     1
   end
 
-  defp usage do
-    IO.puts "Commands:"
-    IO.puts "  automedia whats_app move [OPTIONS]"
+  defp usage(device \\ :stdio) do
+    IO.puts device, "Command:"
+    IO.puts device, "  automedia whats_app move [OPTIONS]"
+  end
+
+  defp move_usage(device \\ :stdio) do
+    IO.puts device, "Usage:"
+    IO.puts device, "  automedia whats_app move [OPTIONS]"
+    IO.puts device, Automedia.OptionParser.help(@move_switches)
   end
 end
