@@ -34,13 +34,7 @@ defmodule Automedia.Signal.CLI do
   @signal_move Application.compile_env(:automedia, :signal_move, Move)
   @signal_unpack_backup Application.compile_env(:automedia, :signal_unpack_backup, UnpackBackup)
 
-  @callback run([]) :: :integer
-  def run([]) do
-    usage(:stderr)
-    1
-  end
-
-  @callback run([String.t()]) :: {:ok}
+  @callback run([String.t()]) :: :integer
   def run(["clean" | args]) do
     case Automedia.OptionParser.run(args, switches: @clean_switches) do
       {:ok, options, []} ->
@@ -102,8 +96,8 @@ defmodule Automedia.Signal.CLI do
     end
   end
 
-  def run(args) do
-    IO.puts :stderr, "automedia signal, expected 'clean', 'move' or 'unpack' command, got #{inspect(args)}"
+  def run(_args) do
+    usage(:stderr)
     1
   end
 
