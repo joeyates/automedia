@@ -10,6 +10,7 @@ defmodule Automedia.MixProject do
       elixirc_paths: elixirc_paths(Mix.env),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      consolidate_protocols: Mix.env() != :test,
       releases: [{@app, release()}],
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -23,10 +24,16 @@ defmodule Automedia.MixProject do
   end
 
   def application do
-    [
+    application = [
       extra_applications: extra_applications(Mix.env()),
-      mod: {Automedia.CLI, []}
     ]
+
+    build_cli = System.get_env("BUILD_BAKEWARE")
+    if build_cli do
+      [{:mod, {Automedia.CLI, []}} | application]
+    else
+      application
+    end
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
