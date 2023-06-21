@@ -23,6 +23,11 @@ defmodule Automedia.CLI do
     IO.puts device, "automedia android|fit|nextcloud|signal|whats_app ARGS"
   end
 
+  defp run("help", _args) do
+    list_top_level_commands()
+    0
+  end
+
   defp run("android", args) do
     Automedia.Android.CLI.run(args)
   end
