@@ -19,8 +19,8 @@ defmodule Automedia.WhatsApp.MovableTest do
         %Automedia.Movable{
           date: ~D[2016-05-01],
           destination: nil,
-          extension: "JPEG",
-          source: "/path/IMG-20160501-WA9999.jpg",
+          extension: "jpeg",
+          source: "/path/IMG-20160501-WA9999.jpeg",
           time: nil
         }
       ]
@@ -35,7 +35,7 @@ defmodule Automedia.WhatsApp.MovableTest do
         %Automedia.Movable{
           date: ~D[2016-05-01],
           destination: nil,
-          extension: "JPEG",
+          extension: "jpg",
           source: "/path/IMG-20160501-WA9999.jpg",
           time: nil
         }
@@ -49,9 +49,9 @@ defmodule Automedia.WhatsApp.MovableTest do
       :ok,
       [
         %Automedia.Movable{
-          date: ~D[2016-05-01],
+          date: ~D[2019-02-06],
           destination: nil,
-          extension: "MP4",
+          extension: "mp4",
           source: "/path/VID-20190206-WA0020.mp4",
           time: nil
         }

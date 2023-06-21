@@ -49,6 +49,11 @@ defmodule Automedia.WhatsApp.CLI do
     end
   end
 
+  def run(args) do
+    IO.puts("automedia whats_app, expected 'move' command, got #{inspect(args)}")
+    1
+  end
+
   defp usage do
     IO.puts "Commands:"
     IO.puts "  automedia whats_app move [OPTIONS]"
