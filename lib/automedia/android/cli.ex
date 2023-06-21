@@ -46,5 +46,6 @@ defmodule Automedia.Android.CLI do
 
   def run(args) do
     IO.puts("automedia android, expected 'move' command, got #{inspect(args)}")
+    1
   end
 end

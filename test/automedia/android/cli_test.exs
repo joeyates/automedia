@@ -4,13 +4,35 @@ defmodule Automedia.Android.CLITest do
 
   setup :verify_on_exit!
 
-  test "it moves files" do
-    expect(Automedia.Android.MockMove, :run, fn _ -> {:ok} end)
+  test "without parameters, it fails" do
+    result = Automedia.Android.CLI.run([])
 
-    Automedia.Android.CLI.run(["--source", "a", "--destination", "b"])
+    assert result == 1
+  end
+
+  test "without an unknown command, it fails" do
+    result = Automedia.Android.CLI.run(~w(foo))
+
+    assert result == 1
   end
 
   test "without required parameters, it fails" do
-    assert catch_exit(Automedia.Android.CLI.run(["--foo", "a"])) == 1
+    result = Automedia.Android.CLI.run(~w(move --foo a))
+
+    assert result == 1
+  end
+
+  test "it moves files" do
+    expect(Automedia.Android.MockMove, :run, fn _ -> {:ok} end)
+
+    Automedia.Android.CLI.run(~w(move --source a --destination b))
+  end
+
+  test "it succeeds" do
+    stub(Automedia.Android.MockMove, :run, fn _ -> {:ok} end)
+
+    result = Automedia.Android.CLI.run(~w(move --source a --destination b))
+
+    assert result == 0
   end
 end
