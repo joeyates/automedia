@@ -6,7 +6,7 @@ defmodule Automedia.Fit.CLI do
   alias Automedia.OptionParser
   alias Automedia.Fit.Convert
 
-  @convert_switches %{
+  @convert_switches [
     bike_data_convertor_path: %{type: :string, required: true},
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
@@ -14,7 +14,7 @@ defmodule Automedia.Fit.CLI do
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
-  }
+  ]
 
   @fit_convert Application.compile_env(:automedia, :fit_convert, Convert)
 

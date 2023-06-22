@@ -5,30 +5,30 @@ defmodule Automedia.Signal.CLI do
   alias Automedia.Signal.Move
   alias Automedia.Signal.UnpackBackup
 
-  @clean_switches %{
+  @clean_switches [
     dry_run: %{type: :boolean},
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
-  }
+  ]
 
-  @move_switches %{
+  @move_switches [
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
     start_timestamp_file: %{type: :string},
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
-  }
+  ]
 
-  @unpack_switches %{
+  @unpack_switches [
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
     password_file: %{type: :string, required: true},
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
-  }
+  ]
 
   @signal_clean Application.compile_env(:automedia, :signal_clean, Clean)
   @signal_move Application.compile_env(:automedia, :signal_move, Move)

@@ -5,14 +5,14 @@ defmodule Automedia.WhatsApp.CLI do
 
   alias Automedia.WhatsApp.Move
 
-  @move_switches %{
+  @move_switches [
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
     prefix: %{type: :string, required: true},
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
-  }
+  ]
 
   @whatsapp_move Application.compile_env(:automedia, :whatsapp_move, Move)
 

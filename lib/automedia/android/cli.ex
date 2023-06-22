@@ -6,13 +6,13 @@ defmodule Automedia.Android.CLI do
 
   alias Automedia.Android.Move
 
-  @switches %{
+  @switches [
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
-  }
+  ]
 
   @android_move Application.compile_env(:automedia, :android_move, Move)
 

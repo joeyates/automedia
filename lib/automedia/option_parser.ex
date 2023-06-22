@@ -9,13 +9,13 @@ defmodule Automedia.OptionParser do
   Parses command arguments, returns an error if
   required arguments are not supplied and sets the logging level
 
-    iex> Automedia.OptionParser.run(["--foo", "hi"], switches: %{foo: %{type: :string}})
+    iex> Automedia.OptionParser.run(["--foo", "hi"], switches: [foo: %{type: :string}])
     {:ok, %{foo: "hi"}, []}
 
-    iex> Automedia.OptionParser.run(["-f", "hi"], switches: %{foo: %{type: :string}}, aliases: [f: :foo])
+    iex> Automedia.OptionParser.run(["-f", "hi"], switches: [foo: %{type: :string}], aliases: [f: :foo])
     {:ok, %{foo: "hi"}, []}
 
-    iex> Automedia.OptionParser.run(["--bar", "hi"], switches: %{foo: %{type: :string}})
+    iex> Automedia.OptionParser.run(["--bar", "hi"], switches: [foo: %{type: :string}])
     {:error, "Unexpected parameters supplied: [\"--bar\"]"}
 
     iex> Automedia.OptionParser.run(["non-switch"], remaining: 1)
@@ -33,22 +33,22 @@ defmodule Automedia.OptionParser do
     iex> Automedia.OptionParser.run(["first"], remaining: 2..3)
     {:error, "Supply 2..3 non-switch arguments"}
 
-    iex> Automedia.OptionParser.help(%{foo: %{type: :boolean}})
+    iex> Automedia.OptionParser.help([foo: %{type: :boolean}])
     "Options:\n  --foo                      Optional parameter"
 
-    iex> Automedia.OptionParser.help(%{foo: %{type: :string}})
+    iex> Automedia.OptionParser.help([foo: %{type: :string}])
     "Options:\n  --foo=FOO                  Optional parameter"
 
-    iex> Automedia.OptionParser.help(%{foo: %{type: :string, required: true}})
+    iex> Automedia.OptionParser.help([foo: %{type: :string, required: true}])
     "Options:\n  --foo=FOO                  Required"
 
-    iex> Automedia.OptionParser.help(%{foo: %{type: :boolean, description: "Frobnicate"}})
+    iex> Automedia.OptionParser.help([foo: %{type: :boolean, description: "Frobnicate"}])
     "Options:\n  --foo                      Frobnicate"
 
-    iex> Automedia.OptionParser.help(%{foo: %{type: :string, description: "Frobnicate"}})
+    iex> Automedia.OptionParser.help([foo: %{type: :string, description: "Frobnicate"}])
     "Options:\n  --foo=FOO                  Frobnicate"
 
-    iex> Automedia.OptionParser.help(%{foo: %{type: :string, description: "Frobnicate", required: true}})
+    iex> Automedia.OptionParser.help([foo: %{type: :string, description: "Frobnicate", required: true}])
     "Options:\n  --foo=FOO                  Frobnicate. Required"
   """
   def run(args, options \\ []) do
@@ -98,7 +98,7 @@ defmodule Automedia.OptionParser do
 
   defp parse(args, opts) do
     aliases = (opts[:aliases] || []) ++ [q: :quiet, v: :verbose]
-    switches = Map.merge((opts[:switches] || %{}), %{quiet: %{type: :boolean}, verbose: %{type: :count}})
+    switches = Keyword.merge((opts[:switches] || []), [quiet: %{type: :boolean}, verbose: %{type: :count}])
     switches_keyword = switches_keyword(switches)
 
     case OptionParser.parse(args, aliases: aliases, strict: switches_keyword) do
@@ -117,7 +117,7 @@ defmodule Automedia.OptionParser do
 
   defp check_required(named, opts) do
     missing =
-      opts.switches
+      (opts[:switches] || [])
       |> Enum.map(fn
           {name, %{required: true}} ->
             if !Map.has_key?(named, name), do: name
