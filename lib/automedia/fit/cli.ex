@@ -19,6 +19,7 @@ defmodule Automedia.Fit.CLI do
   @fit_convert Application.compile_env(:automedia, :fit_convert, Convert)
 
   @callback run([String.t()]) :: {:ok}
+
   def run(["convert" | args]) do
     case OptionParser.run(args, switches: @convert_switches) do
       {:ok, options, []} ->
@@ -30,6 +31,16 @@ defmodule Automedia.Fit.CLI do
         IO.puts :stderr, message
         1
     end
+  end
+
+  def run(["help" | ["convert" | _args]]) do
+    convert_usage()
+    0
+  end
+
+  def run(["help" | _args]) do
+    usage()
+    0
   end
 
   def run(_args) do
