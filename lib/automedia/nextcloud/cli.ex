@@ -19,6 +19,7 @@ defmodule Automedia.Nextcloud.CLI do
   ]
 
   @callback run([String.t()]) :: :integer
+
   def run(["tag" | args]) do
     case Automedia.OptionParser.run(args, switches: @tag_switches) do
       {:ok, options, []} ->
