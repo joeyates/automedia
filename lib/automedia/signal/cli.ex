@@ -1,88 +1,127 @@
 defmodule Automedia.Signal.CLI do
   @moduledoc false
 
-  require Logger
-
   alias Automedia.Signal.Clean
   alias Automedia.Signal.Move
   alias Automedia.Signal.UnpackBackup
 
   @clean_switches [
-    dry_run: :boolean,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
+    dry_run: %{type: :boolean},
+    quiet: %{type: :boolean},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
   ]
-
-  @clean_required ~w(source)a
 
   @move_switches [
-    destination: :string,
-    dry_run: :boolean,
-    start_timestamp_file: :string,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
+    destination: %{type: :string, required: true},
+    dry_run: %{type: :boolean},
+    start_timestamp_file: %{type: :string},
+    quiet: %{type: :boolean},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
   ]
-
-  @move_required ~w(destination source)a
 
   @unpack_switches [
-    destination: :string,
-    dry_run: :boolean,
-    password_file: :string,
-    quiet: :boolean,
-    source: :string,
-    verbose: :count
+    destination: %{type: :string, required: true},
+    dry_run: %{type: :boolean},
+    password_file: %{type: :string, required: true},
+    quiet: %{type: :boolean},
+    source: %{type: :string, required: true},
+    verbose: %{type: :count}
   ]
 
-  @unpack_required ~w(destination password_file source)a
+  @signal_clean Application.compile_env(:automedia, :signal_clean, Clean)
+  @signal_move Application.compile_env(:automedia, :signal_move, Move)
+  @signal_unpack_backup Application.compile_env(:automedia, :signal_unpack_backup, UnpackBackup)
 
-  @signal_clean Application.get_env(:automedia, :signal_clean, Clean)
-  @signal_move Application.get_env(:automedia, :signal_move, Move)
-  @signal_unpack_backup Application.get_env(:automedia, :signal_unpack_backup, UnpackBackup)
+  @callback run([String.t()]) :: integer()
 
-  @callback run([String.t()]) :: {:ok}
   def run(["clean" | args]) do
-    case Automedia.OptionParser.run(
-          args,
-          switches: @clean_switches,
-          required: @clean_required,
-          struct: Clean
-        ) do
+    case Automedia.OptionParser.run(args, switches: @clean_switches) do
       {:ok, options, []} ->
-        {:ok} = @signal_clean.run(options)
+        {:ok} =
+          struct!(Clean, options)
+          |> @signal_clean.run()
+        0
       {:error, message} ->
-        Logger.error message
-        exit(1)
+        IO.puts :stderr, message
+        1
     end
   end
+
+  def run(["help" | ["clean" | _args]]) do
+    clean_usage()
+    IO.puts "..."
+    0
+  end
+
+  def run(["help" | ["move" | _args]]) do
+    move_usage()
+    IO.puts "..."
+    0
+  end
+
+  def run(["help" | ["unpack" | _args]]) do
+    unpack_usage()
+    IO.puts "..."
+    0
+  end
+
+  def run(["help" | _args]) do
+    usage()
+    0
+  end
+
+  def run(["move" | args]) do
+    case Automedia.OptionParser.run(args, switches: @move_switches) do
+      {:ok, options, []} ->
+        {:ok} =
+          struct!(Move, options)
+          |> @signal_move.run()
+        0
+      {:error, message} ->
+        IO.puts :stderr, message
+        1
+    end
+  end
+
   def run(["unpack" | args]) do
-    case Automedia.OptionParser.run(
-          args,
-          switches: @unpack_switches,
-          required: @unpack_required,
-          struct: UnpackBackup
-        ) do
+    case Automedia.OptionParser.run(args, switches: @unpack_switches) do
       {:ok, options, []} ->
-        {:ok} = @signal_unpack_backup.run(options)
+        {:ok} =
+          struct!(UnpackBackup, options)
+          |> @signal_unpack_backup.run()
       {:error, message} ->
-        Logger.error message
-        exit(1)
+        IO.puts :stderr, message
+        1
     end
   end
-  def run(args) do
-    case Automedia.OptionParser.run(
-          args,
-          switches: @move_switches,
-          required: @move_required,
-          struct: Move
-        ) do
-      {:ok, options, []} ->
-        {:ok} = @signal_move.run(options)
-      {:error, message} ->
-        Logger.error message
-        exit(1)
-    end
+
+  def run(_args) do
+    usage(:stderr)
+    1
+  end
+
+  defp usage(device \\ :stdio) do
+    IO.puts device, "Commands:"
+    IO.puts device, "  automedia signal clean|move|unpack [OPTIONS]"
+  end
+
+  defp clean_usage(device \\ :stdio) do
+    IO.puts device, "Usage:"
+    IO.puts device, "  automedia signal clean [OPTIONS]"
+    IO.puts device, Automedia.OptionParser.help(@clean_switches)
+  end
+
+  defp move_usage(device \\ :stdio) do
+    IO.puts device, "Usage:"
+    IO.puts device, "  automedia signal move [OPTIONS]"
+    IO.puts device, Automedia.OptionParser.help(@move_switches)
+  end
+
+  defp unpack_usage(device \\ :stdio) do
+    IO.puts device, "Usage:"
+    IO.puts device, "  automedia unpack [OPTIONS]"
+    IO.puts device, Automedia.OptionParser.help(@unpack_switches)
   end
 end

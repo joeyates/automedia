@@ -6,32 +6,35 @@ defmodule Automedia.Nextcloud.CLI do
   alias Automedia.Nextcloud.Tag
 
   @tag_switches [
-    database: :string,
-    database_prefix: :string,
-    dry_run: :boolean,
-    host: :string,
-    match: :string,
-    password: :string,
-    path_prefix: :string,
-    tag: :string,
-    username: :string
+    database: %{type: :string, required: true},
+    database_prefix: %{type: :string, required: true},
+    case_sensitive: %{type: :boolean},
+    dry_run: %{type: :boolean},
+    host: %{type: :string, required: true},
+    match: %{type: :string},
+    password: %{type: :string, required: true},
+    path_prefix: %{type: :string},
+    tag: %{type: :string, required: true},
+    username: %{type: :string, required: true}
   ]
 
-  @tag_required ~w(database_prefix tag host database username password)a
+  @callback run([String.t()]) :: integer()
 
-  @callback run([String.t()]) :: {:ok}
   def run(["tag" | args]) do
-    case Automedia.OptionParser.run(
-          args,
-          switches: @tag_switches,
-          required: @tag_required,
-          struct: Tag
-        ) do
+    case Automedia.OptionParser.run(args, switches: @tag_switches) do
       {:ok, options, []} ->
-        {:ok} = Tag.run(options)
+        {:ok} =
+          struct!(Tag, options)
+          |> Tag.run()
+        0
       {:error, message} ->
-        Logger.error message
-        exit(1)
+        IO.puts :stderr, message
+        1
     end
+  end
+
+  def run(args) do
+    IO.puts :stderr, "automedia nextcloud, expected 'tag' command, got #{inspect(args)}"
+    1
   end
 end

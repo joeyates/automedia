@@ -6,13 +6,15 @@ defmodule Automedia.Signal.Timestamp do
   require Logger
   import Automedia.ConversionHelpers, only: [i_or_nil: 1]
 
-  @file_module Application.get_env(:automedia, :file_module, File)
+  @file_module Application.compile_env(:automedia, :file_module, File)
+
+  @callback optionally_read(Automedia.Signal.Move.t()) :: {:ok, integer() | nil}
+  @callback optionally_write([Automedia.Movable.t()], Automedia.Signal.Move.t()) :: {:ok}
 
   @doc """
   If present, reads the timestamp file, parses its contents (a UNIX timestamp)
   end returns the result.
   """
-  @callback optionally_read(Automedia.Signal.Move.t()) :: {:ok, integer() | nil}
   def optionally_read(%Automedia.Signal.Move{start_timestamp_file: nil}), do: {:ok, nil}
   def optionally_read(%Automedia.Signal.Move{start_timestamp_file: pathname}) do
     if @file_module.regular?(pathname) do
@@ -28,7 +30,6 @@ defmodule Automedia.Signal.Timestamp do
     end
   end
 
-  @callback optionally_write([Automedia.Movable.t()], Automedia.Signal.Move.t()) :: {:ok}
   def optionally_write([], _options), do: {:ok}
   def optionally_write(_movables, %{dry_run: true}), do: {:ok}
   def optionally_write(_movables, %{start_timestamp_file: nil}), do: {:ok}

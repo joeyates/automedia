@@ -4,10 +4,10 @@ defmodule Automedia.Signal.Move do
   @enforce_keys ~w(destination source)a
   defstruct ~w(destination dry_run quiet source start_timestamp_file verbose)a
 
-  @destination_chooser Application.get_env(:automedia, :destination_chooser, Automedia.DestinationChooser)
-  @move Application.get_env(:automedia, :move, Automedia.Move)
-  @signal_movable Application.get_env(:automedia, :signal_movable, Automedia.Signal.Movable)
-  @signal_timestamp Application.get_env(:automedia, :signal_timestamp, Automedia.Signal.Timestamp)
+  @destination_chooser Application.compile_env(:automedia, :destination_chooser, Automedia.DestinationChooser)
+  @move Application.compile_env(:automedia, :move, Automedia.Move)
+  @signal_movable Application.compile_env(:automedia, :signal_movable, Automedia.Signal.Movable)
+  @signal_timestamp Application.compile_env(:automedia, :signal_timestamp, Automedia.Signal.Timestamp)
 
   @type t :: %__MODULE__{
     destination: Path.t(),
@@ -19,6 +19,7 @@ defmodule Automedia.Signal.Move do
   }
 
   @callback run(__MODULE__.t()) :: {:ok}
+
   def run(%__MODULE__{} = options) do
     if options.dry_run, do: Logger.debug "This is a dry run, nothing will be changed"
 

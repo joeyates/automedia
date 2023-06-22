@@ -3,17 +3,19 @@ defmodule Automedia.OptionParser do
   A project-specific command-line option parser
   """
 
+  @help_left_column_width 29
+
   @doc ~S"""
   Parses command arguments, returns an error if
   required arguments are not supplied and sets the logging level
 
-    iex> Automedia.OptionParser.run(["--foo", "hi"], switches: [foo: :string])
+    iex> Automedia.OptionParser.run(["--foo", "hi"], switches: [foo: %{type: :string}])
     {:ok, %{foo: "hi"}, []}
 
-    iex> Automedia.OptionParser.run(["-f", "hi"], switches: [foo: :string], aliases: [f: :foo])
+    iex> Automedia.OptionParser.run(["-f", "hi"], switches: [foo: %{type: :string}], aliases: [f: :foo])
     {:ok, %{foo: "hi"}, []}
 
-    iex> Automedia.OptionParser.run(["--bar", "hi"], switches: [foo: :string])
+    iex> Automedia.OptionParser.run(["--bar", "hi"], switches: [foo: %{type: :string}])
     {:error, "Unexpected parameters supplied: [\"--bar\"]"}
 
     iex> Automedia.OptionParser.run(["non-switch"], remaining: 1)
@@ -30,6 +32,24 @@ defmodule Automedia.OptionParser do
 
     iex> Automedia.OptionParser.run(["first"], remaining: 2..3)
     {:error, "Supply 2..3 non-switch arguments"}
+
+    iex> Automedia.OptionParser.help([foo: %{type: :boolean}])
+    "Options:\n  --foo                      Optional parameter"
+
+    iex> Automedia.OptionParser.help([foo: %{type: :string}])
+    "Options:\n  --foo=FOO                  Optional parameter"
+
+    iex> Automedia.OptionParser.help([foo: %{type: :string, required: true}])
+    "Options:\n  --foo=FOO                  Required"
+
+    iex> Automedia.OptionParser.help([foo: %{type: :boolean, description: "Frobnicate"}])
+    "Options:\n  --foo                      Frobnicate"
+
+    iex> Automedia.OptionParser.help([foo: %{type: :string, description: "Frobnicate"}])
+    "Options:\n  --foo=FOO                  Frobnicate"
+
+    iex> Automedia.OptionParser.help([foo: %{type: :string, description: "Frobnicate", required: true}])
+    "Options:\n  --foo=FOO                  Frobnicate. Required"
   """
   def run(args, options \\ []) do
     with {:ok, opts} <- options_map(options),
@@ -37,8 +57,7 @@ defmodule Automedia.OptionParser do
          {:ok} <- check_required(named, opts),
          {:ok} <- check_remaining(remaining, opts),
          {:ok} <- setup_logger(named),
-         {:ok, filtered} <- remove_logging(named),
-         {:ok, filtered} <- optionally_build_struct(filtered, opts) do
+         {:ok, filtered} <- remove_logging(named) do
       {:ok, filtered, remaining}
     else
       {:error, message} ->
@@ -46,13 +65,43 @@ defmodule Automedia.OptionParser do
     end
   end
 
+  def help(switches) do
+    items =
+      switches
+      |> Enum.map(&switch_help/1)
+      |> Enum.join("\n")
+
+    "Options:\n#{items}"
+  end
+
+  defp switch_help({name, options}) do
+    left_column = if options.type == :string do
+      parameter = name |> Atom.to_string() |> String.upcase()
+      "  --#{name}=#{parameter}  "
+    else
+      "  --#{name}  "
+    end
+    extra = @help_left_column_width - String.length(left_column)
+    padding = if extra > 0 do
+      String.duplicate(" ", extra)
+    else
+      ""
+    end
+    right_column = if options[:description], do: [options.description], else: []
+    right_column = if options[:required], do: ["Required" | right_column], else: right_column
+    right_column = if length(right_column) == 0, do: ["Optional parameter"], else: right_column
+    right_column = right_column |> Enum.reverse() |> Enum.join(". ")
+    "#{left_column}#{padding}#{right_column}"
+  end
+
   defp options_map(options), do: {:ok, Enum.into(options, %{})}
 
   defp parse(args, opts) do
     aliases = (opts[:aliases] || []) ++ [q: :quiet, v: :verbose]
-    switches = (opts[:switches] || []) ++ [quiet: :boolean, verbose: :count]
+    switches = Keyword.merge((opts[:switches] || []), [quiet: %{type: :boolean}, verbose: %{type: :count}])
+    switches_keyword = switches_keyword(switches)
 
-    case OptionParser.parse(args, aliases: aliases, strict: switches) do
+    case OptionParser.parse(args, aliases: aliases, strict: switches_keyword) do
       {named_list, remaining, []} ->
         named = Enum.into(named_list, %{})
         {:ok, named, remaining}
@@ -62,10 +111,21 @@ defmodule Automedia.OptionParser do
     end
   end
 
-  defp check_required(named, opts) do
-    required = opts[:required] || []
+  defp switches_keyword(switches) do
+    Enum.map(switches, fn {name, %{type: type}} -> {name, type} end)
+  end
 
-    missing = Enum.filter(required, &(!Map.has_key?(named, &1)))
+  defp check_required(named, opts) do
+    missing =
+      (opts[:switches] || [])
+      |> Enum.map(fn
+          {name, %{required: true}} ->
+            if !Map.has_key?(named, name), do: name
+          _ ->
+            nil
+        end)
+      |> Enum.filter(&(&1))
+
     if length(missing) == 0 do
       {:ok}
     else
@@ -89,11 +149,6 @@ defmodule Automedia.OptionParser do
   defp check_remaining(remaining, _opts) do
     {:error, "You supplied unexpected non-switch arguments #{inspect(remaining)}"}
   end
-
-  defp optionally_build_struct(named, %{struct: module}) do
-    {:ok, struct!(module, named)}
-  end
-  defp optionally_build_struct(named, _opts), do: {:ok, named}
 
   defp setup_logger(named) do
     verbose = Map.get(named, :verbose, 1)

@@ -9,9 +9,10 @@ defmodule Automedia.Android.Movable do
   @with_date_and_millisecond ~r[\/(?:PXL)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})(\d{3})\.((?:MP\.)?jpe?g|mp4)]i
   @with_date_second_and_milisecond ~r[\/(?:IMG_|VID_|)(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})_(\d{3})\.(jpe?g|mp4)]i
 
-  @file_module Application.get_env(:automedia, :file_module, File)
+  @file_module Application.compile_env(:automedia, :file_module, File)
 
   @callback find(String.t()) :: [Automedia.Movable.t()]
+
   def find(path) do
     Logger.debug "Scanning '#{path}' for Android files"
 

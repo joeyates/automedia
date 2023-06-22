@@ -15,10 +15,11 @@ defmodule Automedia.Signal.Movable do
     \z
   ]x
 
-  @file_module Application.get_env(:automedia, :file_module, File)
+  @file_module Application.compile_env(:automedia, :file_module, File)
 
   @callback find(Path.t(), keyword()) :: [Path.t()]
   @callback find(Path.t()) :: [Path.t()]
+
   def find(path, options \\ []) do
     start = Keyword.get(options, :from)
 

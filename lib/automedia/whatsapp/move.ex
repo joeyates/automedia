@@ -4,9 +4,9 @@ defmodule Automedia.WhatsApp.Move do
   @enforce_keys ~w(destination prefix source)a
   defstruct ~w(destination dry_run prefix quiet source verbose)a
 
-  @destination_chooser Application.get_env(:automedia, :destination_chooser, Automedia.DestinationChooser)
-  @move Application.get_env(:automedia, :move, Automedia.Move)
-  @whatsapp_movable Application.get_env(:automedia, :whatsapp_movable, Automedia.WhatsApp.Movable)
+  @destination_chooser Application.compile_env(:automedia, :destination_chooser, Automedia.DestinationChooser)
+  @move Application.compile_env(:automedia, :move, Automedia.Move)
+  @whatsapp_movable Application.compile_env(:automedia, :whatsapp_movable, Automedia.WhatsApp.Movable)
 
   @type t :: %__MODULE__{
     destination: Path.t(),
@@ -18,6 +18,7 @@ defmodule Automedia.WhatsApp.Move do
   }
 
   @callback run(__MODULE__.t()) :: {:ok}
+
   def run(%__MODULE__{} = options) do
     if options.dry_run, do: Logger.debug "This is a dry run, nothing will be changed"
 
