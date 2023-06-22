@@ -5,6 +5,7 @@ defmodule Automedia.DestinationChooser do
 
   @callback run([Automedia.Movable.t()], String.t()) :: [Automedia.Movable.t()]
   @callback run([Automedia.Movable.t()], String.t(), String.t()) :: [Automedia.Movable.t()]
+
   @doc ~S"""
   Calculates the destination path based on date, time (in seconds) and extension:
 

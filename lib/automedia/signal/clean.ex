@@ -10,6 +10,7 @@ defmodule Automedia.Signal.Clean do
   @signal_backups Application.compile_env(:automedia, :signal_backups, Automedia.Signal.Backups)
 
   @callback run(__MODULE__) :: {:ok}
+
   def run(%__MODULE__{} = options) do
     {:ok, backups} = all_but_latest_backup(options)
     Enum.each(backups, fn backup ->

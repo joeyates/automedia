@@ -10,6 +10,7 @@ defmodule Automedia.WhatsApp.Movable do
   @file_module Application.compile_env(:automedia, :file_module, File)
 
   @callback find(String.t()) :: [Automedia.Movable.t()]
+
   def find(path) do
     Logger.debug "Scanning '#{path}' for WhatsApp files"
 

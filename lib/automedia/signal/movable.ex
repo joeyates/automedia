@@ -19,6 +19,7 @@ defmodule Automedia.Signal.Movable do
 
   @callback find(Path.t(), keyword()) :: [Path.t()]
   @callback find(Path.t()) :: [Path.t()]
+
   def find(path, options \\ []) do
     start = Keyword.get(options, :from)
 

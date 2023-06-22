@@ -18,7 +18,7 @@ defmodule Automedia.Nextcloud.CLI do
     username: %{type: :string, required: true}
   ]
 
-  @callback run([String.t()]) :: :integer
+  @callback run([String.t()]) :: integer()
 
   def run(["tag" | args]) do
     case Automedia.OptionParser.run(args, switches: @tag_switches) do

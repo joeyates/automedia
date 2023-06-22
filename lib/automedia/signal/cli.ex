@@ -34,7 +34,8 @@ defmodule Automedia.Signal.CLI do
   @signal_move Application.compile_env(:automedia, :signal_move, Move)
   @signal_unpack_backup Application.compile_env(:automedia, :signal_unpack_backup, UnpackBackup)
 
-  @callback run([String.t()]) :: :integer
+  @callback run([String.t()]) :: integer()
+
   def run(["clean" | args]) do
     case Automedia.OptionParser.run(args, switches: @clean_switches) do
       {:ok, options, []} ->

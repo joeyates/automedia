@@ -4,6 +4,7 @@ defmodule Automedia.Signal.Backups do
   @file_module Application.compile_env(:automedia, :file_module, File)
 
   @callback from(Path.t()) :: [Path.t()]
+
   def from(path) do
     {
       :ok,

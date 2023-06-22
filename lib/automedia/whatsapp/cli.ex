@@ -16,14 +16,13 @@ defmodule Automedia.WhatsApp.CLI do
 
   @whatsapp_move Application.compile_env(:automedia, :whatsapp_move, Move)
 
-  @callback run([]) :: integer()
+  @callback run([String.t()]) :: integer()
 
   def run([]) do
     usage(:stderr)
     1
   end
 
-  @callback run([String.t()]) :: :integer
   def run(["help" | ["move" | _args]]) do
     move_usage()
     0

@@ -19,6 +19,7 @@ defmodule Automedia.Signal.Move do
   }
 
   @callback run(__MODULE__.t()) :: {:ok}
+
   def run(%__MODULE__{} = options) do
     if options.dry_run, do: Logger.debug "This is a dry run, nothing will be changed"
 

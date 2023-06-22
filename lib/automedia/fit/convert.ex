@@ -14,9 +14,10 @@ defmodule Automedia.Fit.Convert do
     verbose: integer()
   }
 
+  @callback run(__MODULE__.t()) :: {:ok | :error, String.t()}
+
   @with_fit_extension ~r[\.fit$]i
 
-  @callback run(__MODULE__.t()) :: {:ok | :error, String.t()}
   def run(%__MODULE__{} = options) do
     with {:ok, fit_files} <- list_fit_files(options.source),
          {:ok, pairs} <- build_destination_paths(fit_files, options.destination),

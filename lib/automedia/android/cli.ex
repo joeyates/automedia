@@ -16,7 +16,7 @@ defmodule Automedia.Android.CLI do
 
   @android_move Application.compile_env(:automedia, :android_move, Move)
 
-  @callback run([String.t()]) :: :integer
+  @callback run([String.t()]) :: integer()
 
   def run(["help" | ["move" | _args]]) do
     move_usage()
