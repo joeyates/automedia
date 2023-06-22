@@ -37,8 +37,7 @@ defmodule Automedia.OptionParser do
          {:ok} <- check_required(named, opts),
          {:ok} <- check_remaining(remaining, opts),
          {:ok} <- setup_logger(named),
-         {:ok, filtered} <- remove_logging(named),
-         {:ok, filtered} <- optionally_build_struct(filtered, opts) do
+         {:ok, filtered} <- remove_logging(named) do
       {:ok, filtered, remaining}
     else
       {:error, message} ->
@@ -111,11 +110,6 @@ defmodule Automedia.OptionParser do
   defp check_remaining(remaining, _opts) do
     {:error, "You supplied unexpected non-switch arguments #{inspect(remaining)}"}
   end
-
-  defp optionally_build_struct(named, %{struct: module}) do
-    {:ok, struct!(module, named)}
-  end
-  defp optionally_build_struct(named, _opts), do: {:ok, named}
 
   defp setup_logger(named) do
     verbose = Map.get(named, :verbose, 1)
