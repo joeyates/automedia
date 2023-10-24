@@ -1,6 +1,8 @@
 defmodule Automedia.Fit.Convert do
   @moduledoc false
 
+  require Logger
+
   @enforce_keys ~w(bike_data_convertor_path destination source)a
   defstruct ~w(bike_data_convertor_path destination dry_run force quiet source verbose)a
 
@@ -69,6 +71,7 @@ defmodule Automedia.Fit.Convert do
   end
 
   defp convert({source, destination}, bike_data_convertor_path) do
+    Logger.debug("Automedia fit converting '#{source}' to '#{destination}'")
     case System.cmd(
           "mix",
           [
@@ -82,6 +85,7 @@ defmodule Automedia.Fit.Convert do
       {_output, 0} ->
         {:ok}
       {error, _code} ->
+        Logger.error("Failed to run bike_data_convertor. Error: #{error}")
         {:error, "Failed to run bike_data_convertor. Error: #{error}"}
     end
   end
