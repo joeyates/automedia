@@ -38,6 +38,7 @@ RUN (cd elixir; unzip elixir-v1.14.2-otp-24.zip)
 ENV PATH="${PATH}:/app/elixir/bin"
 ENV LC_ALL=en_US.UTF-8
 RUN mix local.hex --force
+RUN mix local.rebar --force
 
 # Prepare build
 RUN apt install -y build-essential zstd
