@@ -75,7 +75,7 @@ automedia whats_app move
 # Build
 
 ```sh
-mix release
+bin/build
 ```
 
 # Roadmap
