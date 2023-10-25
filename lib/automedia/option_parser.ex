@@ -157,7 +157,7 @@ defmodule Automedia.OptionParser do
     level = if quiet do
       0
     else
-      verbose
+      1 + verbose
     end
     Automedia.Logger.put_level(level)
 
