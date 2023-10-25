@@ -73,9 +73,8 @@ defmodule Automedia.Fit.Convert do
   defp convert({source, destination}, bike_data_convertor_path) do
     Logger.debug("Automedia fit converting '#{source}' to '#{destination}'")
     case System.cmd(
-          "mix",
+          "./bike_data_convertor",
           [
-            "bike_data_convertor.fit2_gpx",
             "--source", source,
             "--destination", destination
           ],
