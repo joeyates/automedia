@@ -78,7 +78,8 @@ defmodule Automedia.Fit.Convert do
             "--source", source,
             "--destination", destination
           ],
-          stderr_to_stdout: true
+          stderr_to_stdout: true,
+          env: [{"RELEASE_NODE", "bike_data_convertor@localhost"}]
         ) do
       {_output, 0} ->
         {:ok}
