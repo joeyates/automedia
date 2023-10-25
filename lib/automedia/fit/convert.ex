@@ -73,14 +73,14 @@ defmodule Automedia.Fit.Convert do
   defp convert({source, destination}, bike_data_convertor_binary) do
     Logger.debug("Automedia fit converting '#{source}' to '#{destination}'")
     case System.cmd(
-          bike_data_convertor_binary,
-          [
-            "--source", source,
-            "--destination", destination
-          ],
-          stderr_to_stdout: true,
-          env: [{"RELEASE_NODE", "bike_data_convertor@localhost"}]
-        ) do
+      bike_data_convertor_binary,
+      [
+        "--source", source,
+        "--destination", destination
+      ],
+      stderr_to_stdout: true,
+      env: [{"RELEASE_NODE", "bike_data_convertor@localhost"}]
+    ) do
       {_output, 0} ->
         {:ok}
       {error, _code} ->
