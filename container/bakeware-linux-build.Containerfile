@@ -47,9 +47,8 @@ RUN \
   mix local.hex --force && \
   mix local.rebar --force
 
-# Copy code
+# Install Elixir Dependencies
 COPY ../mix.* /app/
-COPY ../lib /app/lib/
-
-# Prepare build
 RUN mix deps.get
+
+COPY ../lib /app/lib/
