@@ -21,6 +21,7 @@ defmodule Automedia.Fit.Convert do
   @with_fit_extension ~r[\.fit$]i
 
   def run(%__MODULE__{} = options) do
+    Logger.debug("fit convert: #{inspect(options)}")
     with {:ok, fit_files} <- list_fit_files(options.source),
          {:ok, pairs} <- build_destination_paths(fit_files, options.destination),
          {:ok, pairs} <- filter_existing(pairs, options.force) do
