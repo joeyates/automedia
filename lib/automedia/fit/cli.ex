@@ -7,7 +7,7 @@ defmodule Automedia.Fit.CLI do
   alias Automedia.Fit.Convert
 
   @convert_switches [
-    bike_data_convertor_path: %{type: :string, required: true},
+    bike_data_convertor_binary: %{type: :string, required: true},
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
     force: %{type: :boolean},

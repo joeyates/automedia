@@ -3,11 +3,11 @@ defmodule Automedia.Fit.Convert do
 
   require Logger
 
-  @enforce_keys ~w(bike_data_convertor_path destination source)a
-  defstruct ~w(bike_data_convertor_path destination dry_run force quiet source verbose)a
+  @enforce_keys ~w(bike_data_convertor_binary destination source)a
+  defstruct ~w(bike_data_convertor_binary destination dry_run force quiet source verbose)a
 
   @type t :: %__MODULE__{
-    bike_data_convertor_path: Path.t(),
+    bike_data_convertor_binary: Path.t(),
     destination: Path.t(),
     dry_run: boolean(),
     force: boolean(),
@@ -24,7 +24,7 @@ defmodule Automedia.Fit.Convert do
     with {:ok, fit_files} <- list_fit_files(options.source),
          {:ok, pairs} <- build_destination_paths(fit_files, options.destination),
          {:ok, pairs} <- filter_existing(pairs, options.force) do
-      Enum.each(pairs, &(convert(&1, options.bike_data_convertor_path)))
+      Enum.each(pairs, &(convert(&1, options.bike_data_convertor_binary)))
       {:ok}
     else
       {:error, reason} -> {:error, reason}
@@ -70,15 +70,14 @@ defmodule Automedia.Fit.Convert do
     {:ok, new}
   end
 
-  defp convert({source, destination}, bike_data_convertor_path) do
+  defp convert({source, destination}, bike_data_convertor_binary) do
     Logger.debug("Automedia fit converting '#{source}' to '#{destination}'")
     case System.cmd(
-          "./bike_data_convertor",
+          bike_data_convertor_binary,
           [
             "--source", source,
             "--destination", destination
           ],
-          cd: bike_data_convertor_path,
           stderr_to_stdout: true
         ) do
       {_output, 0} ->
