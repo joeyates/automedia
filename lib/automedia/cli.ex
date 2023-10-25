@@ -9,6 +9,7 @@ defmodule Automedia.CLI do
   end
 
   def main([command|args]) do
+    Application.ensure_all_started(:logger)
     try do
       run(command, args)
     rescue e in
