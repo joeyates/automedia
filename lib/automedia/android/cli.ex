@@ -9,6 +9,7 @@ defmodule Automedia.Android.CLI do
   @switches [
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
+    move_duplicates: %{type: :string},
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},
     verbose: %{type: :count}
