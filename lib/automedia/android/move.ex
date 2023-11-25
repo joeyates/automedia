@@ -1,6 +1,6 @@
 defmodule Automedia.Android.Move do
   @enforce_keys ~w(destination source)a
-  defstruct ~w(destination dry_run quiet source verbose)a
+  defstruct ~w(destination dry_run move_duplicates quiet source verbose)a
 
   @destination_chooser Application.compile_env(:automedia, :destination_chooser, Automedia.DestinationChooser)
   @move Application.compile_env(:automedia, :move, Automedia.Move)
