@@ -8,6 +8,7 @@ defmodule Automedia.WhatsApp.CLI do
   @move_switches [
     destination: %{type: :string, required: true},
     dry_run: %{type: :boolean},
+    move_duplicates: %{type: :string},
     prefix: %{type: :string, required: true},
     quiet: %{type: :boolean},
     source: %{type: :string, required: true},

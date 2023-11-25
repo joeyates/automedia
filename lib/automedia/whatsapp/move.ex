@@ -2,7 +2,7 @@ defmodule Automedia.WhatsApp.Move do
   require Logger
 
   @enforce_keys ~w(destination prefix source)a
-  defstruct ~w(destination dry_run prefix quiet source verbose)a
+  defstruct ~w(destination dry_run move_duplicates prefix quiet source verbose)a
 
   @destination_chooser Application.compile_env(:automedia, :destination_chooser, Automedia.DestinationChooser)
   @move Application.compile_env(:automedia, :move, Automedia.Move)
@@ -11,6 +11,7 @@ defmodule Automedia.WhatsApp.Move do
   @type t :: %__MODULE__{
     destination: Path.t(),
     dry_run: boolean(),
+    move_duplicates: String.t(),
     prefix: String.t(),
     quiet: boolean(),
     source: Path.t(),
@@ -32,7 +33,8 @@ defmodule Automedia.WhatsApp.Move do
   defp move(movables, options) do
     if length(movables) == 0, do: Logger.debug "No WhatsApp files found"
 
-    Enum.each(movables, &(@move.move(&1, dry_run: options.dry_run)))
+    move_options = [dry_run: options.dry_run, move_duplicates: options.move_duplicates]
+    Enum.each(movables, &(@move.move(&1, move_options)))
 
     {:ok}
   end
