@@ -28,7 +28,7 @@ defmodule Automedia.Move do
     source = movable.source
     move_duplicates = Keyword.get(options, :move_duplicates)
     if move_duplicates do
-      filename = Path.basename(destination)
+      filename = Path.basename(source)
       away = Path.join(move_duplicates, filename)
       Logger.info "Moving duplicate '#{source}' to '#{away}' as '#{destination}' already exists"
       do_move(source, away, options)
