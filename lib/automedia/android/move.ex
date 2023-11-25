@@ -12,9 +12,10 @@ defmodule Automedia.Android.Move do
 
   def run(%__MODULE__{} = options) do
     Logger.debug "Automedia.Android.Move.run/1, options: #{inspect(options)}"
+    move_options = [dry_run: options.dry_run, move_duplicates: options.move_duplicates]
     with {:ok, movables} <- @android_movable.find(options.source),
          movables <- @destination_chooser.run(movables, options.destination) do
-      Enum.each(movables, &(@move.move(&1, dry_run: options.dry_run)))
+      Enum.each(movables, &(@move.move(&1, move_options)))
       {:ok}
     end
   end
