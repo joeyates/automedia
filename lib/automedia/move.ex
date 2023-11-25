@@ -14,7 +14,9 @@ defmodule Automedia.Move do
     if exists do
       handle_existing(movable, options)
     else
-      do_move(movable, options)
+      destination = movable.destination
+      source = movable.source
+      do_move(source, destination, options)
     end
 
     {:ok}
@@ -23,12 +25,18 @@ defmodule Automedia.Move do
   defp handle_existing(movable, options) do
     destination = movable.destination
     source = movable.source
-    Logger.info "Skipping move of '#{source}' to '#{destination}' - destination file already exists"
+    move_duplicates = Keyword.get(options, :move_duplicates)
+    if move_duplicates do
+      filename = Path.basename(destination)
+      away = Path.join(move_duplicates, filename)
+      Logger.info "Moving duplicate '#{source}' to '#{away}' as '#{destination}' already exists"
+      do_move(source, away, options)
+    else
+      Logger.info "Skipping move of '#{source}' to '#{destination}' - destination file already exists"
+    end
   end
 
-  defp do_move(movable, options) do
-    destination = movable.destination
-    source = movable.source
+  defp do_move(source, destination, options) do
     dry_run = Keyword.get(options, :dry_run, false)
     path = Path.dirname(destination)
     if !@file_module.dir?(path) do
