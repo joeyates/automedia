@@ -10,6 +10,7 @@ defmodule Automedia.Move do
   @callback move(Automedia.Movable.t(), keyword()) :: {:ok}
 
   def move(%Automedia.Movable{destination: destination} = movable, options) do
+    Logger.debug "Automedia.Move.move/2, options: #{inspect(options)}"
     exists = @file_module.regular?(destination)
     if exists do
       handle_existing(movable, options)
