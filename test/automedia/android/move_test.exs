@@ -31,7 +31,7 @@ defmodule Automedia.Android.MoveTest do
   @tag dry_run: true
   test "in a dry run, it does not move files", context do
     %{options: options} = context
-    expect(Automedia.MockMove, :move, fn _, dry_run: true -> {:ok} end)
+    expect(Automedia.MockMove, :move, fn _, dry_run: true, move_duplicates: nil -> {:ok} end)
 
     Automedia.Android.Move.run(options)
   end
